@@ -1,0 +1,34 @@
+[
+  {
+    "date": "2026-11-10",
+    "tag": "AIR OS",
+    "title": "AIR OS 2.3 работает без интернета",
+    "title_en": "AIR OS 2.3 works offline",
+    "text": "После первого запуска бумажная ОС запоминает себя и открывается даже без сети. В этой версии появились Тетрис, «Бумажный бег», Будильник, Конвертер и Оригами с пошаговыми схемами. Иконки можно переименовать, перекрасить и сделать круглыми, а на обои — добавить дождь, снег или светлячков.",
+    "text_en": "After the first launch the paper OS remembers itself and opens even without a network. This version brings Tetris, Paper Run, an alarm clock, a unit converter and Origami with step-by-step guides. Icons can be renamed, recoloured and made round, and the wallpaper can get rain, snow or fireflies."
+  },
+  {
+    "date": "2026-11-10",
+    "tag": "Сайт",
+    "title": "Сайт AIR открылся: студия, коллекция и корзина",
+    "title_en": "The AIR site is open: studio, collection and cart",
+    "text": "Крути бумажный телефон в 3D, выбирай модель, цвет бумаги, узор и надпись на спинке, а потом отправляй заказ. В коллекции собраны шесть готовых изданий: от жёлтого «Солнышка» до крафтового «Max».",
+    "text_en": "Turn the paper phone around in 3D, pick the model, paper colour, pattern and an engraving on the back, then send your order. The collection has six ready editions, from the yellow “Sunny” to the kraft “Max”."
+  },
+  {
+    "date": "2026-11-10",
+    "tag": "AIR OS",
+    "title": "Камера и диктофон в бумажном стиле",
+    "title_en": "A camera and a voice recorder, paper style",
+    "text": "Камера снимает с фильтрами «Бумага», «Аниме», «Пиксели» и «Комикс», а снимок вылетает в галерею, как фотография. Диктофон показывает живую волну звука. Всё хранится только на твоём телефоне.",
+    "text_en": "The camera shoots with Paper, Anime, Pixel and Comic filters, and the photo flies into the gallery like a print. The recorder shows a live sound wave. Everything stays on your own phone."
+  },
+  {
+    "date": "2026-11-10",
+    "tag": "AIR OS",
+    "title": "Эйр научился складывать самолётики",
+    "title_en": "Air learned to fold paper planes",
+    "text": "Спроси помощника «как сложить самолётик», и он расскажет по шагам. А в AIR Store можно поставить приложение «Оригами» с самолётиком, лодочкой и прыгающей лягушкой.",
+    "text_en": "Ask the helper “how do I fold a paper plane” and it will explain step by step. The AIR Store also has the Origami app with a plane, a boat and a jumping frog."
+  }
+]
