@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AIR OS">
 <meta name="theme-color" content="#8fd3ff">
+<link rel="manifest" href="manifest.webmanifest">
 <title>AIR OS</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
@@ -272,6 +273,20 @@ input.t,textarea.t{width:100%;border:1px solid var(--line);background:var(--card
 #phone[data-style=anime]:not([data-theme=photo]):not([data-theme=night]) .wall{background:radial-gradient(circle at 20% 15%,#fff8 0,transparent 25%),radial-gradient(circle at 80% 70%,#fff6 0,transparent 30%),linear-gradient(180deg,#ffd1ec 0%,#d9c8ff 50%,#c9e8ff 100%)}
 #phone[data-style=anime] #lock .time{text-shadow:0 0 24px #ff6ab0,0 0 6px #fff}
 #phone[data-style=anime] .cloud{background:#ffe3f3}
+/* look & feel */
+#phone[data-shape=circle] .ico{border-radius:50%}
+#phone[data-shape=circle] .ico:before{display:none}
+#phone[data-shape=square] .ico{border-radius:7px}
+#phone[data-labels=off] .grid .ic>span{display:none}
+#fxw{position:absolute;inset:0;z-index:5;pointer-events:none}
+.dlg{position:absolute;inset:0;z-index:140;background:rgba(10,15,40,.5);display:grid;place-items:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.dlg>div{width:min(86%,340px);background:var(--paper);color:var(--ink);border-radius:26px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.4);animation:pop .35s both}
+.acs{display:flex;gap:10px;flex-wrap:wrap}
+.acs i{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.2);display:block;transition:transform .15s}
+.acs i:active{transform:scale(.85)}
+.qrs{background:#fff;border-radius:18px;padding:12px;width:180px;margin:10px auto}
+.qrs svg{width:100%;height:auto;display:block}
+.sel{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:12px;font-size:16px;font-family:inherit;outline:none;max-width:120px}
 /* camera + recorder */
 .fold{position:relative}
 .fold:before{content:"";position:absolute;top:0;right:0;width:34px;height:34px;background:linear-gradient(225deg,var(--paper) 50%,rgba(0,0,0,.25) 50%);z-index:3;border-bottom-left-radius:8px;box-shadow:-3px 3px 6px rgba(0,0,0,.2);pointer-events:none}
@@ -301,7 +316,7 @@ input.t,textarea.t{width:100%;border:1px solid var(--line);background:var(--card
 </head>
 <body>
 <div id="phone" data-theme="sky">
-  <div class="wall" id="wall"></div><div class="stars"></div>
+  <div class="wall" id="wall"></div><div class="stars"></div><canvas id="fxw"></canvas>
 
   <div id="status"><span id="stime">9:41</span><span class="r"><span id="snote" style="display:none">♪</span><span>5G</span><span class="bat"><i></i></span></span></div>
   <button id="doneBtn">Готово</button>
@@ -360,7 +375,7 @@ input.t,textarea.t{width:100%;border:1px solid var(--line);background:var(--card
 </div>
 
 <script>
-const VERSION='2.2';
+const VERSION='2.3';
 const $=s=>document.querySelector(s);
 const store={get(k,d){try{const v=localStorage.getItem('air_'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('air_'+k,JSON.stringify(v));return true}catch(e){return false}}};
 const PLANE='<svg viewBox="0 0 64 64"><path d="M4 30 60 6 44 58 32 40z" fill="#fff" stroke="#17325c" stroke-width="3" stroke-linejoin="round"/><path d="M60 6 32 40 30 54 44 58z" fill="#cfe6ff" stroke="#17325c" stroke-width="3" stroke-linejoin="round"/><path d="M32 40 60 6" stroke="#17325c" stroke-width="2.5"/></svg>';
@@ -484,6 +499,9 @@ const TOOLS=[
  {n:'Погода',bg:'linear-gradient(160deg,#7fd6ff,#ffd86b)',e:'🌤️',app:'weather'},
  {n:'Камера',bg:'linear-gradient(160deg,#6b7280,#1f2430)',e:'📷',app:'camera'},
  {n:'Диктофон',bg:'linear-gradient(160deg,#ff7a8a,#e0366c)',e:'🎙️',app:'recorder'},
+ {n:'Будильник',bg:'linear-gradient(160deg,#ffb347,#ff6a3d)',e:'⏰',app:'alarm'},
+ {n:'Конвертер',bg:'linear-gradient(160deg,#6be585,#168a8a)',e:'🔁',app:'convert'},
+ {n:'Оригами',bg:'linear-gradient(160deg,#fff,#cfe6ff)',e:'📄',app:'origami'},
  {n:'Календарь',bg:'linear-gradient(160deg,#fff,#ffd9d9)',e:'📅',app:'calendar'},
  {n:'Задачи',bg:'linear-gradient(160deg,#7fd6ff,#2b8cff)',e:'✅',app:'tasks'},
  {n:'Музыка',bg:'linear-gradient(160deg,#ff9ad5,#ff4d6d)',e:'🎵',app:'music'},
@@ -497,6 +515,8 @@ const TOOLS=[
 ];
 const GAMES=[
  {n:'Самолётик',bg:'linear-gradient(160deg,#6cc3ff,#2b6bff)',e:'✈️',app:'plane'},
+ {n:'Тетрис',bg:'linear-gradient(160deg,#7fd6ff,#4a7bff)',e:'🧱',app:'tetris'},
+ {n:'Бумажный бег',bg:'linear-gradient(160deg,#ffe36b,#ff8a3d)',e:'🏃',app:'runner'},
  {n:'2048',bg:'linear-gradient(160deg,#ffb347,#ff6a3d)',e:'🔢',app:'g2048'},
  {n:'Змейка',bg:'linear-gradient(160deg,#6be585,#1a9c55)',e:'🐍',app:'snake'},
  {n:'Мемори',bg:'linear-gradient(160deg,#c58bff,#6a5cff)',e:'🃏',app:'memory'},
@@ -513,16 +533,16 @@ const DOCK=[
  {n:'Safari',bg:'linear-gradient(160deg,#fff,#b9d7ff)',e:'🧭',url:'https://www.google.com'},
 ];
 const ALL=[...EXT.map(a=>({...a,g:'g1'})),...TOOLS.map(a=>({...a,g:'g2'})),...GAMES.map(a=>({...a,g:'g3'}))];
-const DEFAULT_HIDDEN=['Сапёр','Пинг-понг'];
+const DEFAULT_HIDDEN=['Сапёр','Пинг-понг','Будильник','Конвертер','Оригами'];
 const hiddenL=()=>[...(store.get('hidden',null)||DEFAULT_HIDDEN)];
 let editing=false,sup=false;
 
 function mk(a,removable){
  const d=document.createElement('div');d.className='ic';d.dataset.id=a.n;
- d.innerHTML=`<div class="ico" style="background:${a.bg}">${a.i||`<span class="em">${a.e}</span>`}</div><span>${a.n}</span>${removable&&!a.keep?'<div class="x">✕</div>':''}`;
+ d.innerHTML=`<div class="ico" style="background:${a.bg}">${a.i||`<span class="em">${a.e}</span>`}</div><span>${(store.get('names',{}))[a.n]||a.n}</span>${removable&&!a.keep?'<div class="x">✕</div>':''}`;
  d.addEventListener('click',e=>{
   if(sup){sup=false;return}
-  if(editing){const x=e.target.closest('.x');if(x)removeApp(d,a);return}
+  if(editing){const x=e.target.closest('.x');if(x){removeApp(d,a);return}if(e.target.tagName==='SPAN'&&e.target.parentElement===d)askName(a,e.target);return}
   launch(a,d.querySelector('.ico'));
  });
  return d;
@@ -820,6 +840,12 @@ settings(root){
  <div class="card"><b>Твоё имя</b><input class="t" id="sn" style="margin-top:8px" placeholder="Как тебя зовут?"></div>
  <div class="card"><b>Обои</b><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn" data-t="sky" style="padding:10px 14px">☀️ День</button><button class="btn" data-t="sunset" style="background:linear-gradient(135deg,#ff8a5c,#e0366c);padding:10px 14px">🌇 Закат</button><button class="btn" data-t="night" style="background:linear-gradient(135deg,#2a3a8a,#0a1030);padding:10px 14px">🌙 Ночь</button></div>
  <div style="display:flex;gap:8px;margin-top:10px"><button class="btn g" id="sph">🖼️ Фото из галереи</button><button class="btn g" id="srp">Убрать фото</button></div><input type="file" id="pf" accept="image/*" hidden></div>
+ <div class="card"><b>Иконки и цвета</b><div style="margin:10px 0 6px;font-size:13px;opacity:.7">Цвет акцента</div><div class="acs" id="acs"></div>
+ <div style="margin:14px 0 6px;font-size:13px;opacity:.7">Форма иконок</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn g" data-sh="round" style="padding:9px 14px">▢ Мягкая</button><button class="btn g" data-sh="circle" style="padding:9px 14px">⚪ Круг</button><button class="btn g" data-sh="square" style="padding:9px 14px">⬛ Квадрат</button></div>
+ <div class="row" style="justify-content:space-between;margin-top:14px"><b style="font-size:15px">Подписи под иконками</b><button class="btn g" id="slb" style="padding:9px 14px"></button></div>
+ <div style="opacity:.65;font-size:13px;margin-top:8px">Чтобы переименовать приложение: зажми иконку и тапни по названию.</div></div>
+ <div class="card"><b>Эффект на обоях</b><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn g" data-fx="none" style="padding:9px 14px">Нет</button><button class="btn g" data-fx="rain" style="padding:9px 14px">🌧️ Дождь</button><button class="btn g" data-fx="snow" style="padding:9px 14px">❄️ Снег</button><button class="btn g" data-fx="fire" style="padding:9px 14px">✨ Светлячки</button></div></div>
+ <div class="card"><b>Поделиться AIR OS</b><div class="qrs" id="sqr" style="min-height:90px"></div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn g" id="scp" style="padding:9px 14px">📋 Ссылка</button><button class="btn g" id="ssh" style="padding:9px 14px">⬆️ Отправить</button><a class="btn g" href="site/" target="_blank" style="padding:9px 14px;text-decoration:none">🌐 Сайт AIR</a></div></div>
  <div class="card"><b>Стиль оформления</b><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn g" data-s="paper" style="padding:10px 14px">📄 Бумага</button><button class="btn g" data-s="anime" style="padding:10px 14px">🌸 Аниме</button><button class="btn g" data-s="pixel" style="padding:10px 14px">👾 Пиксели</button><button class="btn g" data-s="comic" style="padding:10px 14px">💥 Комикс</button></div></div>
  <div class="card"><div class="row" style="justify-content:space-between"><b>Звуки</b><button class="btn g" id="ssn"></button></div></div>
  <div class="card"><b>Приложения</b><div style="opacity:.7;margin:6px 0 10px;font-size:14px">Зажми иконку на главном экране, чтобы переставить или удалить</div><button class="btn g" id="sra">Вернуть удалённые</button> <button class="btn g" id="srl">Сбросить порядок</button></div>
@@ -833,6 +859,14 @@ settings(root){
  $('#srp').onclick=()=>{sfx.crumple();try{localStorage.removeItem('air_photo')}catch(e){}setTheme('sky');toast('Фото убрано')};
  const sn=()=>$('#ssn').textContent=muted?'🔕 Выключены':'🔔 Включены';sn();$('#ssn').onclick=()=>{setMuted(!muted);sn();sfx.tap()};
  root.querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',()=>setStyle(b.dataset.s)));
+ ['#2b8cff','#ff6ab0','#22b24c','#ff8a00','#8a4dff','#e0366c','#17a398'].forEach(c=>{const i=document.createElement('i');i.style.background=c;i.onclick=()=>{store.set('accent',c);applyLook();sfx.tap()};$('#acs').appendChild(i)});
+ root.querySelectorAll('[data-sh]').forEach(b=>b.onclick=()=>{store.set('shape',b.dataset.sh);applyLook();sfx.tap()});
+ const lb=()=>$('#slb').textContent=store.get('labels',true)?'Показаны':'Скрыты';lb();$('#slb').onclick=()=>{store.set('labels',!store.get('labels',true));applyLook();lb();sfx.tap()};
+ root.querySelectorAll('[data-fx]').forEach(b=>b.onclick=()=>{store.set('fx',b.dataset.fx);initFx();sfx.tap()});
+ const AIRU=location.origin+location.pathname.replace(/index\.html$/,'');
+ loadQR(()=>{const q=qrcode(0,'M');q.addData(AIRU);q.make();const e=$('#sqr');if(e)e.innerHTML=q.createSvgTag({cellSize:5,margin:0,scalable:true})});
+ $('#scp').onclick=async()=>{try{await navigator.clipboard.writeText(AIRU);toast('Ссылка скопирована ✅')}catch(e){toast(AIRU)}};
+ $('#ssh').onclick=async()=>{if(navigator.share){try{await navigator.share({title:'AIR OS',url:AIRU})}catch(e){}}else{try{await navigator.clipboard.writeText(AIRU);toast('Ссылка скопирована ✅')}catch(e){}}};
  $('#str').onclick=()=>{sfx.tap();closeApp();setTimeout(startTour,550)};
  const chk=async()=>{const b=$('#ucheck');sfx.tap();b.textContent='Проверяю… ⏳';
   try{const v=await remoteVersion();if(v&&v!==VERSION){$('#uv').textContent='Найдена новая версия '+v+' 🎉';b.textContent='⬇️ Обновить до '+v;b.onclick=doUpdate;sfx.notify()}
@@ -1041,6 +1075,7 @@ async function airAnswer(raw){
  if(/^(привет|здравствуй|хай|хэй|добрый|здорово)/.test(q)){const n=store.get('name','');return `Привет${n?', '+n:''}! 👋 Чем могу помочь?`}
  if(has('как дела','как ты'))return 'Отлично, лечу по облакам ✈️ А у тебя как?';
  if(has('кто ты','как тебя зовут','ты кто'))return 'Я Эйр — помощник AIR OS ✈️ Живу прямо в твоём бумажном телефоне и работаю без интернета (кроме погоды).';
+ if(has('как сложить','оригами','сложить самолет','сложить самолёт'))return 'Классический самолётик из листа А4:\n1. Сложи лист пополам по длине и разверни обратно.\n2. Загни верхние углы к центральной линии.\n3. Ещё раз загни скошенные края к центру.\n4. Сложи фигуру пополам по центру.\n5. Загни крылья вниз по краю корпуса.\n6. Подогни кончики крыльев вверх — и запускай! ✈️\nПодробнее — в приложении «Оригами» (ставится в AIR Store).';
  if(has('спасибо','благодарю'))return 'Всегда пожалуйста! 💙';
  if(has('молодец','круто','класс','супер'))return 'Спасибо! Стараюсь 😊';
  if(has('пока','до свидания'))return 'Пока! Заглядывай ещё 👋';
@@ -1066,7 +1101,7 @@ APP.assistant=function(root){
 };
 
 /* ===== AIR STORE ===== */
-const DESC={'WhatsApp':'Мессенджер','YouTube Детям':'Видео для детей','Brawl Stars':'Игра от Supercell','Roblox':'Миллионы игр','Карты':'Навигация','Календарь':'События и напоминания','Задачи':'Список дел с прогрессом','Музыка':'Мелодии, которые сочиняет телефон','Пианино':'Играй пальцами','Калькулятор':'Считает всё','Заметки':'Записывай идеи','Часы':'Секундомер и таймер','Рисовалка':'Рисуй на бумаге','Фонарик':'Экран-светильник','Эйр':'Умный помощник','Погода':'Прогноз на 5 дней','Самолётик':'Лети между облаками','2048':'Соединяй числа','Змейка':'Классика','Мемори':'Найди все пары','Крестики':'Играй против ИИ','Лови звёзды':'Быстрые тапы','Кликер':'Кто больше накликает','Сапёр':'Найди мины и не взорвись','Пинг-понг':'Матч против ИИ','Камера':'Фото с бумажными фильтрами','Диктофон':'Записывай голос'};
+const DESC={'WhatsApp':'Мессенджер','YouTube Детям':'Видео для детей','Brawl Stars':'Игра от Supercell','Roblox':'Миллионы игр','Карты':'Навигация','Календарь':'События и напоминания','Задачи':'Список дел с прогрессом','Музыка':'Мелодии, которые сочиняет телефон','Пианино':'Играй пальцами','Калькулятор':'Считает всё','Заметки':'Записывай идеи','Часы':'Секундомер и таймер','Рисовалка':'Рисуй на бумаге','Фонарик':'Экран-светильник','Эйр':'Умный помощник','Погода':'Прогноз на 5 дней','Самолётик':'Лети между облаками','2048':'Соединяй числа','Змейка':'Классика','Мемори':'Найди все пары','Крестики':'Играй против ИИ','Лови звёзды':'Быстрые тапы','Кликер':'Кто больше накликает','Сапёр':'Найди мины и не взорвись','Пинг-понг':'Матч против ИИ','Камера':'Фото с бумажными фильтрами','Диктофон':'Записывай голос','Тетрис':'Складывай блоки в линии','Бумажный бег':'Прыгай через ножницы','Будильник':'Звонит, пока AIR OS открыта','Конвертер':'Длина, вес, объём, температура','Оригами':'Складывай самолётики по шагам'};
 APP.store=function(root){
  let cat='Все';const catOf=a=>a.g==='g3'?'Игры':a.g==='g2'?'Инструменты':'Приложения';
  function render(){
@@ -1374,6 +1409,144 @@ APP.recorder=function(root){
  list();
 };
 
+/* ===== ВНЕШНИЙ ВИД: акцент, форма, подписи, эффекты, переименование ===== */
+function loadQR(cb){if(window.qrcode)return cb();const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';s.onload=cb;s.onerror=()=>{const e=$('#sqr');if(e)e.textContent='Нужен интернет для QR'};document.head.appendChild(s)}
+function applyLook(){
+ const ph=$('#phone'),ac=store.get('accent',null);
+ if(ac)ph.style.setProperty('--accent',ac);else ph.style.removeProperty('--accent');
+ ph.dataset.shape=store.get('shape','round');ph.dataset.labels=store.get('labels',true)?'on':'off';
+ initFx();
+}
+let fxRaf=0;
+function initFx(){
+ cancelAnimationFrame(fxRaf);const c=$('#fxw'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;x.clearRect(0,0,c.width,c.height);
+ const m=store.get('fx','none');if(m==='none')return;
+ const N={rain:90,snow:70,fire:34}[m],P=[...Array(N)].map(()=>({x:Math.random()*c.width,y:Math.random()*c.height,v:m==='rain'?9+Math.random()*7:.6+Math.random()*1.4,l:14+Math.random()*14,r:m==='snow'?1.5+Math.random()*3:2+Math.random()*4,p:Math.random()*6.28}));
+ (function loop(){
+  x.clearRect(0,0,c.width,c.height);
+  for(const p of P){
+   if(m==='rain'){p.y+=p.v;p.x-=1.2;x.strokeStyle='rgba(120,170,255,.65)';x.lineWidth=1.6;x.beginPath();x.moveTo(p.x,p.y);x.lineTo(p.x+2,p.y-p.l);x.stroke();if(p.y>c.height){p.y=-20;p.x=Math.random()*c.width}}
+   else if(m==='snow'){p.p+=.02;p.y+=p.v;p.x+=Math.sin(p.p)*.6;x.fillStyle='rgba(255,255,255,.9)';x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill();if(p.y>c.height){p.y=-10;p.x=Math.random()*c.width}}
+   else{p.p+=.02;p.x+=Math.cos(p.p)*.5;p.y+=Math.sin(p.p*1.3)*.5;const a=.45+.45*Math.sin(p.p*3),g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4);g.addColorStop(0,`rgba(255,240,150,${a})`);g.addColorStop(1,'rgba(255,240,150,0)');x.fillStyle=g;x.beginPath();x.arc(p.x,p.y,p.r*4,0,7);x.fill()}
+  }
+  fxRaf=requestAnimationFrame(loop);
+ })();
+}
+addEventListener('resize',()=>{clearTimeout(initFx.t);initFx.t=setTimeout(initFx,300)});
+function askName(a,span){
+ const cur=(store.get('names',{}))[a.n]||a.n,o=document.createElement('div');o.className='dlg';
+ o.innerHTML='<div><b style="font-size:18px">Название приложения</b><input class="t" id="rn" style="margin:12px 0" maxlength="16"><div class="row" style="justify-content:flex-end"><button class="btn g" id="rc" style="padding:10px 16px">Отмена</button><button class="btn" id="ro" style="padding:10px 18px">Готово</button></div></div>';
+ $('#phone').appendChild(o);const i=$('#rn');i.value=cur;i.focus();i.select();
+ $('#rc').onclick=()=>o.remove();
+ $('#ro').onclick=()=>{const n=store.get('names',{}),v=i.value.trim();if(v&&v!==a.n)n[a.n]=v;else delete n[a.n];store.set('names',n);span.textContent=v||a.n;sfx.drop();o.remove()};
+}
+
+/* ===== БУДИЛЬНИК (звонит, пока AIR OS открыта) ===== */
+const alarmFired={};
+function ring(a){notify({t:'⏰ Будильник',b:a.l||a.t,e:'⏰',app:'alarm'});let n=0;const iv=setInterval(()=>{sfx.win();buzz([200,100,200]);if(++n>=6)clearInterval(iv)},1500)}
+setInterval(()=>{const d=new Date(),hm=pad2(d.getHours())+':'+pad2(d.getMinutes()),key=dk(d)+hm;store.get('alarms',[]).forEach((a,i)=>{if(a.on&&a.t===hm&&!alarmFired[key+i]){alarmFired[key+i]=1;ring(a)}})},5000);
+APP.alarm=function(root){
+ let al=store.get('alarms',[]);
+ function render(){
+  root.innerHTML=`<div class="pad"><h2>⏰ Будильник</h2><div class="row" style="margin-bottom:8px"><input type="time" class="t" id="at" value="07:30" style="width:140px"><input class="t" id="al" placeholder="Название"><button class="btn" id="aa" style="padding:12px 16px">+</button></div><div style="opacity:.6;font-size:13px;margin:0 4px 12px">Будильник звонит, пока AIR OS открыта на экране телефона.</div>${al.map((a,i)=>`<div class="card task" style="animation-delay:${i*40}ms"><b style="font-size:30px;font-weight:300">${a.t}</b><span style="opacity:.7">${(a.l||'').replace(/</g,'&lt;')}</span><input type="checkbox" data-i="${i}" ${a.on?'checked':''} style="margin-left:auto"><button class="rm" data-r="${i}" style="margin-left:0">✕</button></div>`).join('')||'<div style="opacity:.55;text-align:center;padding:24px">Будильников нет. Добавь первый ✨</div>'}</div>`;
+  $('#aa').onclick=()=>{const t=$('#at').value;if(!t)return;al.push({t,l:$('#al').value.trim(),on:true});al.sort((a,b)=>a.t.localeCompare(b.t));store.set('alarms',al);sfx.win();render()};
+  root.querySelectorAll('input[type=checkbox]').forEach(c=>c.onchange=()=>{al[+c.dataset.i].on=c.checked;store.set('alarms',al);sfx.tap()});
+  root.querySelectorAll('.rm').forEach(b=>b.onclick=()=>{sfx.crumple();al.splice(+b.dataset.r,1);store.set('alarms',al);render()});
+ }
+ render();
+};
+
+/* ===== КОНВЕРТЕР ===== */
+const UNITS={'Длина':{'м':1,'км':1000,'см':.01,'мм':.001,'миля':1609.344,'фут':.3048,'дюйм':.0254},'Вес':{'кг':1,'г':.001,'т':1000,'фунт':.45359237,'унция':.0283495},'Объём':{'л':1,'мл':.001,'м³':1000,'галлон':3.78541,'чашка':.2365882},'Температура':null};
+function convTemp(v,f,t){let c=f==='°C'?v:f==='°F'?(v-32)*5/9:v-273.15;return t==='°C'?c:t==='°F'?c*9/5+32:c+273.15}
+APP.convert=function(root){
+ let cat='Длина',a=1,from='км',to='м';
+ const keys=()=>cat==='Температура'?['°C','°F','K']:Object.keys(UNITS[cat]);
+ function calcv(){const v=parseFloat($('#cv1').value);if(isNaN(v)){$('#cv2').value='';return}const r=cat==='Температура'?convTemp(v,$('#cf').value,$('#ct').value):v*UNITS[cat][$('#cf').value]/UNITS[cat][$('#ct').value];$('#cv2').value=+r.toFixed(6)}
+ function render(){
+  const k=keys();if(!k.includes(from))from=k[0];if(!k.includes(to))to=k[1]||k[0];
+  root.innerHTML=`<div class="pad"><h2>🔁 Конвертер</h2><div class="chips" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">${Object.keys(UNITS).map(c=>`<button class="chip" data-c="${c}" style="${c===cat?'background:var(--accent);color:#fff':''}">${c}</button>`).join('')}</div>
+  <div class="card"><div class="row"><input class="t" id="cv1" type="number" inputmode="decimal" value="${a}"><select class="sel" id="cf">${k.map(u=>`<option ${u===from?'selected':''}>${u}</option>`).join('')}</select></div></div>
+  <div style="text-align:center;font-size:26px;margin:-4px 0 6px">⇅</div>
+  <div class="card"><div class="row"><input class="t" id="cv2" readonly><select class="sel" id="ct">${k.map(u=>`<option ${u===to?'selected':''}>${u}</option>`).join('')}</select></div></div></div>`;
+  root.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{sfx.tap();cat=b.dataset.c;render()});
+  $('#cv1').oninput=()=>{a=$('#cv1').value;calcv()};$('#cf').onchange=()=>{from=$('#cf').value;calcv();sfx.tap()};$('#ct').onchange=()=>{to=$('#ct').value;calcv();sfx.tap()};calcv();
+ }
+ render();
+};
+
+/* ===== ОРИГАМИ ===== */
+const ORI=[
+ {n:'Классический самолётик',e:'✈️',s:['Положи лист А4 вертикально и сложи пополам по длине. Разверни обратно — получилась центральная линия.','Загни верхние углы к центральной линии.','Ещё раз загни скошенные края к центру.','Сложи фигуру пополам по центральной линии, острыми краями наружу.','Загни крыло вниз вдоль нижнего края корпуса. То же — со вторым крылом.','Разверни крылья в стороны, подогни кончики вверх — и запускай!']},
+ {n:'Лодочка',e:'⛵',s:['Сложи лист пополам по короткой стороне.','Загни верхние углы к середине — получится «шляпа» с полосками внизу.','Загни нижние полоски вверх: спереди и сзади.','Раскрой «шляпу» и расплющи в ромб.','Загни нижние уголки ромба вверх: спереди и сзади.','Снова раскрой в ромб и потяни верхние концы в стороны — лодочка готова!']},
+ {n:'Прыгающая лягушка',e:'🐸',s:['Возьми квадратный лист и сложи по диагонали, затем разверни.','Сложи лист пополам, чтобы получился прямоугольник, и разверни.','Сведи боковые края к центру — получится треугольник сверху.','Загни нижние уголки треугольника к верхушке.','Сложи нижнюю часть пополам вверх, затем ещё раз — получится «пружина».','Нажми пальцем на сгиб сзади, и лягушка подпрыгнет!']},
+];
+APP.origami=function(root){
+ function list(){root.innerHTML=`<div class="pad"><h2>📄 Оригами</h2><div style="opacity:.7;margin:0 2px 12px">Выбери модель и складывай по шагам.</div>${ORI.map((m,i)=>`<div class="card" data-i="${i}" style="display:flex;align-items:center;gap:14px"><span style="font-size:38px">${m.e}</span><div><b>${m.n}</b><div style="opacity:.6;font-size:13px">${m.s.length} шагов</div></div></div>`).join('')}</div>`;root.querySelectorAll('.card').forEach(c=>c.onclick=()=>{sfx.tap();show(+c.dataset.i)})}
+ function show(i){
+  const m=ORI[i],done=new Set();
+  root.innerHTML=`<div class="pad"><div class="row" style="margin-bottom:10px"><button class="btn g" id="ob">‹ Назад</button><h2 style="margin:0;font-size:22px">${m.e} ${m.n}</h2></div><div id="op" style="height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin-bottom:14px"><i id="opf" style="display:block;height:100%;width:0;background:linear-gradient(90deg,#2b8cff,#ff6ab0);transition:width .4s"></i></div>${m.s.map((s,k)=>`<div class="card task" data-k="${k}" style="align-items:flex-start;cursor:pointer;animation-delay:${k*50}ms"><b style="width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;flex:none">${k+1}</b><span style="font-weight:600;line-height:1.4">${s}</span></div>`).join('')}</div>`;
+  $('#ob').onclick=()=>{sfx.tap();list()};
+  root.querySelectorAll('.task').forEach(c=>c.onclick=()=>{const k=+c.dataset.k;if(done.has(k)){done.delete(k);c.classList.remove('done')}else{done.add(k);c.classList.add('done');tone(600+k*80,.08,'triangle',.12)}$('#opf').style.width=(done.size/m.s.length*100)+'%';if(done.size===m.s.length){sfx.win();confetti();notify({t:'Готово! '+m.e,b:'«'+m.n+'» сложено. Запускай!',e:'🏆',app:'origami'})}});
+ }
+ list();
+};
+
+/* ===== ТЕТРИС ===== */
+APP.tetris=function(root){
+ root.innerHTML=`<div style="display:flex;flex-direction:column;height:100%"><div class="hud"><span>Очки <b id="ts">0</b></span><span>Линии <b id="tn">0</b></span><span>🏆 <b id="tb">${store.get('tetbest',0)}</b></span></div><div id="tbx" style="flex:1;min-height:0;display:grid;place-items:center"><canvas id="tc"></canvas></div><div class="row" style="justify-content:center;padding:8px 8px 10px"><button class="rnd" id="tl">◀</button><button class="rnd" id="trt">⟳</button><button class="rnd" id="tr">▶</button><button class="rnd" id="td">▼</button><button class="rnd" id="th">⤓</button></div></div>`;
+ const C=10,R=20,box=$('#tbx'),cell=Math.max(10,Math.floor(Math.min(box.clientWidth/C,box.clientHeight/R))),c=$('#tc');
+ c.width=cell*C;c.height=cell*R;c.style.cssText=`width:${cell*C}px;height:${cell*R}px;border-radius:12px;background:rgba(20,42,99,.07);box-shadow:inset 0 0 0 3px var(--line);touch-action:none`;const x=c.getContext('2d');
+ const SH=[[[0,1],[1,1],[2,1],[3,1]],[[1,0],[2,0],[1,1],[2,1]],[[1,0],[0,1],[1,1],[2,1]],[[1,0],[2,0],[0,1],[1,1]],[[0,0],[1,0],[1,1],[2,1]],[[0,0],[0,1],[1,1],[2,1]],[[2,0],[0,1],[1,1],[2,1]]],COL=['#6cc3ff','#ffe14d','#c58bff','#6be585','#ff6a6a','#4a7bff','#ffa84d'];
+ let B,P,score,lines,over,iv,best=store.get('tetbest',0);
+ const fits=(cells,px,py)=>cells.every(([a,b])=>{const X=px+a,Y=py+b;return X>=0&&X<C&&Y<R&&(Y<0||!B[Y][X])});
+ function spawn(){const i=Math.floor(Math.random()*7);P={cells:SH[i].map(q=>[...q]),col:COL[i],x:3,y:0,size:i===0?4:3,o:i===1};if(!fits(P.cells,P.x,P.y)){end()}}
+ function init(){B=[...Array(R)].map(()=>Array(C).fill(0));score=0;lines=0;over=false;$('#ts').textContent=0;$('#tn').textContent=0;spawn();clearInterval(iv);iv=setInterval(step,speed());draw()}
+ const speed=()=>Math.max(110,650-Math.floor(lines/10)*60);
+ function lock(){P.cells.forEach(([a,b])=>{const Y=P.y+b;if(Y>=0)B[Y][P.x+a]=P.col});let n=0;for(let y=R-1;y>=0;y--){if(B[y].every(Boolean)){B.splice(y,1);B.unshift(Array(C).fill(0));n++;y++}}
+  if(n){score+=[0,100,300,500,800][n];lines+=n;sfx.win();clearInterval(iv);iv=setInterval(step,speed());$('#ts').textContent=score;$('#tn').textContent=lines}else tone(260,.05,'triangle',.1);spawn()}
+ function step(){if(over)return;if(fits(P.cells,P.x,P.y+1))P.y++;else lock();draw()}
+ function move(d){if(!over&&fits(P.cells,P.x+d,P.y)){P.x+=d;draw()}}
+ function rot(){if(over||P.o)return;const n=P.cells.map(([a,b])=>[P.size-1-b,a]);for(const k of[0,-1,1,-2,2])if(fits(n,P.x+k,P.y)){P.cells=n;P.x+=k;tone(520,.04,'triangle',.08);draw();return}}
+ function drop(){if(over)return;while(fits(P.cells,P.x,P.y+1))P.y++;lock();draw();buzz(8)}
+ function end(){over=true;clearInterval(iv);sfx.lose();if(score>best){best=score;store.set('tetbest',best);$('#tb').textContent=best;confetti();notify({t:'Рекорд в Тетрисе! 🧱',b:best+' очков',e:'🏆',app:'tetris'})}}
+ function draw(){
+  x.clearRect(0,0,c.width,c.height);
+  const blk=(X,Y,col)=>{x.fillStyle=col;x.beginPath();x.roundRect(X*cell+1,Y*cell+1,cell-2,cell-2,5);x.fill();x.fillStyle='rgba(255,255,255,.35)';x.fillRect(X*cell+4,Y*cell+3,cell-8,3)};
+  B.forEach((r,y)=>r.forEach((v,X)=>v&&blk(X,y,v)));if(!over)P.cells.forEach(([a,b])=>blk(P.x+a,P.y+b,P.col));
+  if(over){x.fillStyle='rgba(20,42,99,.7)';x.fillRect(0,0,c.width,c.height);x.fillStyle='#fff';x.font=`800 ${cell}px sans-serif`;x.textAlign='center';x.fillText('Конец!',c.width/2,c.height/2-6);x.font=`600 ${cell*.6}px sans-serif`;x.fillText('Тапни, чтобы заново',c.width/2,c.height/2+cell)}
+ }
+ $('#tl').onclick=()=>move(-1);$('#tr').onclick=()=>move(1);$('#trt').onclick=rot;$('#td').onclick=step;$('#th').onclick=drop;
+ let sx,sy2;c.addEventListener('pointerdown',e=>{sx=e.clientX;sy2=e.clientY});c.addEventListener('pointerup',e=>{if(over){init();return}const dx=e.clientX-sx,dy=e.clientY-sy2;if(Math.max(Math.abs(dx),Math.abs(dy))<14)rot();else if(Math.abs(dx)>Math.abs(dy))move(dx>0?1:-1);else if(dy>0)drop()});
+ cleanups.push(()=>clearInterval(iv));init();
+};
+
+/* ===== БУМАЖНЫЙ БЕГ ===== */
+APP.runner=function(root){
+ root.innerHTML='<canvas style="width:100%;height:100%;display:block;touch-action:none"></canvas>';
+ const c=root.firstChild,x=c.getContext('2d'),W=c.width=root.clientWidth*2,H=c.height=root.clientHeight*2,gy=H*.72,px=150;
+ let y=gy,vy=0,obs=[],speed=11,score=0,st='ready',best=store.get('runbest',0),raf,fr=0,nxt=60;
+ function jump(){if(st==='ready'||st==='over'){st='play';y=gy;vy=0;obs=[];speed=11;score=0;fr=0;nxt=60}if(y>=gy-1){vy=-27;tone(520,.1,'triangle',.1,0,820);buzz(6)}}
+ c.addEventListener('pointerdown',jump);
+ function loop(){
+  const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#8fd3ff');g.addColorStop(1,'#f2fbff');x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.fillStyle='rgba(255,255,255,.8)';[[W*.2,H*.15],[W*.6,H*.28],[W*.85,H*.1]].forEach(([a,b],i)=>{const ox=((a-fr*(.6+i*.2))%(W+300)+W+300)%(W+300)-150;x.beginPath();x.roundRect(ox,b,200,60,40);x.fill()});
+  if(st==='play'){fr++;vy+=1.7;y+=vy;if(y>gy){y=gy;vy=0}speed=11+Math.min(14,score/500);score+=1;
+   if(--nxt<=0){const k=Math.random()<.5;obs.push({x:W+40,w:k?60:46,h:k?70:110,e:k?'✂️':'🖍️'});nxt=Math.floor(55+Math.random()*50-speed)+20}
+   obs.forEach(o=>o.x-=speed);obs=obs.filter(o=>o.x>-100);
+   if(obs.some(o=>px+44>o.x+8&&px-4<o.x+o.w-8&&y>gy-o.h+14)){st='over';sfx.lose();buzz(80);if(Math.floor(score/10)>best){best=Math.floor(score/10);store.set('runbest',best);confetti();notify({t:'Рекорд в Беге! 🏃',b:best+' м',e:'🏆',app:'runner'})}}}
+  x.fillStyle='#97C444';x.fillRect(0,gy+44,W,H);x.fillStyle='#142A63';x.fillRect(0,gy+44,W,6);
+  obs.forEach(o=>{x.font=o.h+'px serif';x.textAlign='left';x.fillText(o.e,o.x-4,gy+44)});
+  const bob=st==='play'&&y>=gy?Math.sin(fr*.5)*3:0;x.save();x.translate(px+22,y+22+bob);x.rotate(st==='play'?vy*.01:0);x.fillStyle='#fff';x.strokeStyle='#142A63';x.lineWidth=5;x.beginPath();x.roundRect(-22,-22,44,44,8);x.fill();x.stroke();x.fillStyle='#142A63';x.fillRect(-12,-8,6,10);x.fillRect(4,-8,6,10);x.fillStyle='#ff6ab0';x.fillRect(-6,10,12,4);x.fillStyle='#cfe6ff';x.beginPath();x.moveTo(22,-22);x.lineTo(6,-22);x.lineTo(22,-6);x.fill();x.restore();
+  x.fillStyle='#142A63';x.font='900 60px sans-serif';x.textAlign='left';x.fillText(Math.floor(score/10)+' м',30,80);x.textAlign='right';x.font='700 36px sans-serif';x.fillText('🏆 '+best,W-30,76);
+  if(st!=='play'){x.textAlign='center';x.font='800 46px sans-serif';x.fillText(st==='ready'?'Тапни, чтобы бежать':'Врезался! Тап — ещё раз',W/2,H*.4)}
+  raf=requestAnimationFrame(loop);
+ }
+ loop();cleanups.push(()=>cancelAnimationFrame(raf));
+};
+
+applyLook();
+
 /* ===== ОБНОВЛЕНИЕ ===== */
 async function remoteVersion(){const r=await fetch(location.pathname+'?c='+Date.now(),{cache:'no-store'});const t=await r.text();const m=t.match(/const VERSION='([^']+)'/);return m?m[1]:null}
 let updChecked=false;
@@ -1398,6 +1571,8 @@ setInterval(()=>{if(lock.classList.contains('gone')&&!editing&&!$('#app').classL
 
 /* загрузка */
 setTimeout(()=>{$('#boot').classList.add('off');setTimeout(()=>$('#boot').remove(),900)},2300);
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+addEventListener('offline',()=>toast('Нет интернета — AIR OS работает офлайн ✈️'));addEventListener('online',()=>toast('Интернет вернулся 🌐'));
 const standalone=navigator.standalone||matchMedia('(display-mode: standalone)').matches;
 if(!standalone)setTimeout(()=>toast('«Поделиться» → «На экран Домой», чтобы установить AIR OS'),3600);
 </script>
