@@ -171,10 +171,24 @@ footer small{opacity:.7}
 #toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,200px);background:var(--ink);color:var(--sun);padding:12px 22px;border-radius:30px;font-weight:600;z-index:120;transition:transform .45s cubic-bezier(.2,1.3,.4,1);max-width:90%;text-align:center}
 #toast.on{transform:translate(-50%,0)}
 .confetti{position:fixed;pointer-events:none;z-index:130}
+/* foldables, discounts, creator */
+.paperp{position:relative;width:100%;height:100%;border-radius:calc(var(--r) - 8px);background:#fbf7ea repeating-linear-gradient(180deg,transparent 0 21px,rgba(60,90,160,.35) 21px 22px);padding:16px 12px;color:#17325c;font-family:var(--display);overflow:hidden}
+.paperp b{font-size:30px;display:block;font-weight:400}.paperp span{position:absolute;right:12px;top:14px;font-size:24px}.paperp i{font-style:normal;font-size:16px;opacity:.7}
+.keysp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;height:100%;align-content:center;background:#fbf7ea;border-radius:calc(var(--r) - 8px);padding:12px}
+.keysp i{font-style:normal;display:grid;place-items:center;aspect-ratio:1.6;border-radius:10px;background:var(--pc);box-shadow:0 2px 0 rgba(0,0,0,.25),inset 0 0 0 2px rgba(255,255,255,.5);font-weight:700;color:#17325c}
+#sale{position:relative;z-index:200;background:#142A63;color:#FFE992;text-align:center;padding:11px 56px;font-weight:700;letter-spacing:.02em;font-size:15px}
+#cr,#codeDlg{position:fixed;inset:0;z-index:140;background:rgba(10,15,40,.65);display:none;place-items:center;padding:14px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#cr.on,#codeDlg.on{display:grid}
+.crbox{background:var(--note);border-radius:26px;max-width:700px;width:100%;max-height:92vh;overflow:auto;padding:22px;animation:pop .35s both;color:var(--text)}
+.dsc{background:var(--card);border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 4px 14px rgba(20,42,99,.1)}
+.dsc .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.dsc label{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
+.crbox details{margin-top:14px;font-size:14px;color:var(--mute);line-height:1.5}
+.crbox details summary{font-size:15px}
 /* compare, about, whatsapp */
 .news{--secbg:var(--news)}.note{--secbg:var(--note)}
 .tablewrap{overflow-x:auto;margin-top:26px;padding-bottom:6px}
-.cmp{width:100%;min-width:560px;border-collapse:separate;border-spacing:0;background:var(--card);border-radius:22px;overflow:hidden;box-shadow:0 12px 34px rgba(20,42,99,.14)}
+.cmp{width:100%;min-width:700px;border-collapse:separate;border-spacing:0;background:var(--card);border-radius:22px;overflow:hidden;box-shadow:0 12px 34px rgba(20,42,99,.14)}
 .cmp th,.cmp td{padding:14px 16px;text-align:center;border-bottom:1px solid rgba(20,42,99,.1);font-size:15px;line-height:1.35}
 .cmp th{font-family:var(--display);font-size:24px;color:var(--ink);font-weight:400;background:rgba(246,188,31,.25)}
 .cmp td:first-child{text-align:left;font-weight:700;color:var(--mute);font-size:13px;letter-spacing:.06em;text-transform:uppercase;width:26%}
@@ -259,6 +273,7 @@ footer small{opacity:.7}
  <button id="bLang" title="Language" aria-label="Language">EN</button>
 </div>
 
+<div id="sale" style="display:none"></div>
 <!-- HERO -->
 <section id="hero">
  <div class="cloud" style="top:30%;width:180px;animation-duration:50s"></div>
@@ -282,13 +297,15 @@ footer small{opacity:.7}
   <div class="stagegrid" style="margin-top:20px">
    <div>
     <div class="scene" id="scene"><div class="ph" id="ph"></div><div class="shadow"></div>
-     <div class="ctrls"><button class="pill" id="rl">←</button><button class="pill" id="live" data-en="Screen: demo">Экран: демо</button><button class="pill" id="rr">→</button></div>
+     <div class="ctrls"><button class="pill" id="rl">←</button><button class="pill" id="live" data-en="Screen: demo">Экран: демо</button><button class="pill" id="rr">→</button><button class="pill" id="fzBtn" style="display:none">Открыть / Закрыть</button></div>
     </div>
     <p style="text-align:center;color:var(--mute);font-size:14px;margin:14px 0 0" data-en="Drag to rotate · the demo screen is the real AIR OS">Тяни, чтобы повернуть · на демо-экране настоящая AIR OS</p>
    </div>
    <div class="panel" id="conf">
     <h3 data-en="Your AIR">Твой AIR</h3>
     <div class="row"><label data-en="Model">Модель</label><div class="chips" id="cModel"></div></div>
+    <div class="row" id="rForm" style="display:none"><label data-en="Second view: how it opens">Второй вид: как раскрывается</label><div class="chips" id="cForm"></div></div>
+    <div class="row" id="rHinge" style="display:none"><label data-en="Hinge">Шарнир</label><div class="chips" id="cHinge"></div></div>
     <div class="row"><label data-en="Paper colour">Цвет бумаги</label><div class="chips" id="cColor"></div></div>
     <div class="row"><label data-en="Pattern">Узор</label><div class="chips" id="cPat"></div></div>
     <div class="row"><label data-en="Cameras">Камеры</label><div class="chips" id="cCam"></div></div>
@@ -305,7 +322,7 @@ footer small{opacity:.7}
  <div class="wrap">
   <div class="eyebrow" data-en="Collection">Коллекция</div>
   <h2 data-en="Ready-made AIR">Готовые AIR</h2>
-  <p class="lead" data-en="Six editions, each one with its own character. Open one to turn it around, or take it as a base and change it in the studio.">Шесть изданий, и у каждого свой характер. Открой любое, чтобы повертеть, или возьми за основу и измени в студии.</p>
+  <p class="lead" data-en="Eight editions, each one with its own character. Open one to turn it around, or take it as a base and change it in the studio.">Восемь изданий, и у каждого свой характер. Открой любое, чтобы повертеть, или возьми за основу и измени в студии.</p>
   <div class="cards" id="cards"></div>
  </div>
 </section>
@@ -385,7 +402,7 @@ footer small{opacity:.7}
     <a class="cta" id="aboutWA" href="#" target="_blank" rel="noopener" data-en="Write to us ✈️">Напиши нам ✈️</a>
    </div>
    <div class="aboutcard"><span class="big">✈️</span>
-    <div class="f"><span data-en="ready editions">готовых изданий</span><b data-count="6">0</b></div>
+    <div class="f"><span data-en="ready editions">готовых изданий</span><b data-count="8">0</b></div>
     <div class="f"><span data-en="models">модели</span><b data-count="3">0</b></div>
     <div class="f"><span data-en="apps & games in AIR OS">приложений и игр в AIR OS</span><b data-count="30">0</b></div>
    </div>
@@ -410,6 +427,7 @@ footer small{opacity:.7}
   <h2 data-en="Good to know">Что полезно знать</h2>
   <div style="margin-top:24px;max-width:720px">
    <details><summary data-en="What is AIR OS?">Что такое AIR OS?</summary><p data-en="It is a paper-style operating system that runs in your phone's browser. Open the link, add it to the Home Screen — and it launches like an app, even without internet.">Это операционная система в бумажном стиле, которая работает в браузере телефона. Открой ссылку, добавь на экран «Домой» — и она запускается как приложение, даже без интернета.</p></details>
+   <details><summary data-en="What is the difference between Fold and Flip?">Чем Fold отличается от Flip?</summary><p data-en="Fold opens sideways like a book, Flip opens upwards like a clamshell. In the studio press “Foldable”, choose the form, and try the Open / Close button.">Fold раскрывается в стороны, как книжка, а Flip — вверх, как раскладушка. В студии нажми «Складной», выбери форму и попробуй кнопку «Открыть / Закрыть».</p></details>
    <details><summary data-en="Can I design my own AIR?">Можно ли придумать свой дизайн?</summary><p data-en="Yes! Use the studio above: model, paper, pattern, cameras and your own engraving. Add it to the cart and send the order.">Да! Используй студию выше: модель, бумага, узор, камеры и своя надпись. Добавь в корзину и отправь заказ.</p></details>
    <details><summary data-en="How do I order?">Как сделать заказ?</summary><p data-en="Add your AIR to the cart, press the cart button, leave a name and contact — the order text is sent to us in a messenger.">Добавь свой AIR в корзину, нажми кнопку корзины, оставь имя и контакт — текст заказа отправится нам в мессенджер.</p></details>
    <details><summary data-en="Is my data safe?">Мои данные в безопасности?</summary><p data-en="AIR OS keeps notes, tasks and photos only on your own phone. The site does not collect anything.">AIR OS хранит заметки, задачи и фото только на твоём телефоне. Сайт ничего не собирает.</p></details>
@@ -421,13 +439,15 @@ footer small{opacity:.7}
  <div class="wrap">
   <h2>AIR</h2>
   <p data-en="Made of paper, air and love ✈️">Сделано из бумаги, воздуха и любви ✈️</p>
-  <div class="links"><button class="pill" id="fShare" data-en="Share the site">Поделиться сайтом</button><button class="pill" id="fTop" data-en="↑ To the top">↑ Наверх</button></div>
+  <div class="links"><button class="pill" id="fShare" data-en="Share the site">Поделиться сайтом</button><button class="pill" id="fTop" data-en="↑ To the top">↑ Наверх</button><button class="pill" id="codesBtn" style="display:none">🔑 Коды</button></div>
   <small>© AIR</small>
  </div>
 </footer>
 
 <a id="waFloat" href="#" target="_blank" rel="noopener" aria-label="WhatsApp" style="display:none"><span class="wi"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.2.1.8-.1 1.4z"/></svg></span><span class="wl" id="waLbl"></span></a>
-<div id="modal"><div class="mbox"><button class="pill mclose" id="mClose">✕</button><div class="mgrid"><div class="scene" id="mscene"><div class="ph" id="mph"></div><div class="shadow"></div></div><div><h3 id="mName"></h3><p class="lead" id="mDesc" style="margin:0 0 14px"></p><div class="chips" id="mSpecs" style="margin-bottom:12px"></div><div class="price"><span id="mPriceT"></span><b id="mPrice"></b></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="cta" id="mAdd" style="margin:0"></button><button class="pill" id="mConf"></button></div></div></div></div></div>
+<div id="cr"><div class="crbox" id="crBox"></div></div>
+<div id="codeDlg"><div class="crbox" style="max-width:380px;text-align:center"><h3 style="font-size:30px;margin-bottom:10px">🔑 Введи код</h3><input class="inp" id="codeIn" placeholder="Код" autocomplete="off" autocapitalize="characters" style="text-align:center;font-size:20px;letter-spacing:.2em"><div style="display:flex;gap:10px;justify-content:center;margin-top:14px"><button class="pill" id="codeX">Отмена</button><button class="cta" id="codeOk" style="margin:0;padding:11px 26px">OK</button></div></div></div>
+<div id="modal"><div class="mbox"><button class="pill mclose" id="mClose">✕</button><div class="mgrid"><div class="scene" id="mscene"><div class="ph" id="mph"></div><div class="shadow"></div></div><div><h3 id="mName"></h3><p class="lead" id="mDesc" style="margin:0 0 14px"></p><div class="chips" id="mSpecs" style="margin-bottom:12px"></div><div class="price"><span id="mPriceT"></span><b id="mPrice"></b></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="cta" id="mAdd" style="margin:0"></button><button class="pill" id="mConf"></button><button class="pill" id="mFold" style="display:none"></button></div></div></div></div></div>
 <button id="cartBtn" aria-label="Корзина">🛒<b id="cartN">0</b></button>
 <div id="cartBack"></div>
 <aside id="cart"><header><h3 data-en="Cart">Корзина</h3><button class="pill" id="cartX">✕</button></header>
@@ -437,6 +457,7 @@ footer small{opacity:.7}
    <div class="row"><input class="inp" id="oName" placeholder="Имя"></div>
    <div class="row"><input class="inp" id="oContact" placeholder="Телефон или @ник"></div>
    <div class="row"><input class="inp" id="oNote" placeholder="Комментарий"></div>
+   <div class="row"><div style="display:flex;gap:8px"><input class="inp" id="oPromo" placeholder="Промокод"><button class="pill" id="promoBtn" data-en="Apply">Применить</button></div><div id="promoMsg" style="font-size:13px;color:var(--mute);margin-top:6px"></div></div>
    <button class="cta" id="sendOrder" style="margin:0 0 12px;width:100%;justify-content:center" data-en="Send order ✈️">Отправить заказ ✈️</button>
    <p id="waHint" style="font-size:13px;color:var(--mute);margin:-4px 0 10px;line-height:1.4;display:none" data-en="WhatsApp will open with your order ready — just press Send there.">Откроется WhatsApp с готовым заказом — останется нажать «Отправить» там.</p>
    <div id="sendPills" style="display:flex;gap:8px;flex-wrap:wrap"><button class="pill" id="sendWA">WhatsApp</button><button class="pill" id="sendTG">Telegram</button><button class="pill" id="sendEmail">E-mail</button><button class="pill" id="sendCopy" data-en="Copy order">Копировать заказ</button></div>
@@ -452,7 +473,8 @@ footer small{opacity:.7}
 const CONTACT={whatsapp:'79224578312',telegram:'',email:'',formspree:''};   // formspree: ID формы с сайта formspree.io (например 'xyzabcde') — тогда заказы будут приходить на твою почту; email: адрес для кнопки «E-mail'            // номер WhatsApp цифрами (например 79001234567) и ник Telegram без @. Пусто = выбор получателя в самом мессенджере
 const CUR='€';
 // Цены в евро: базовая модель 2–3 €, с узором, доп. камерами и надписью — максимум 7 € (Max + звёзды + 3 камеры + надпись)
-const PRICES={models:{one:2.5,mini:2,max:3},pattern:{none:0,news:0,grid:.5,dots:.5,stars:1},camera:.75,engrave:1.5};
+// Складные AIR Fold и Flip: от 8 € до 13 € (8 + звёзды 1 + 3 камеры 1,5 + надпись 1,5 + золотой шарнир 1)
+const PRICES={models:{one:2.5,mini:2,max:3,fold:8,flip:8},pattern:{none:0,news:0,grid:.5,dots:.5,stars:1},camera:.75,engrave:1.5,hinge:1};
 const money=n=>n.toLocaleString(typeof lang!=='undefined'&&lang==='en'?'en-GB':'ru-RU',{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2})+' '+CUR;
 /* ============================================= */
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -498,15 +520,17 @@ const STEPS=[['Идея','Придумываем форму, цвет и хар�
 function buildSteps(){const L=$('#stepList');L.querySelectorAll('.st').forEach(e=>e.remove());STEPS.forEach((s,i)=>{const d=document.createElement('div');d.className='st';d.dataset.n=i+1;d.innerHTML=`<h3>${t(s[0],s[2])}</h3><p>${t(s[1],s[3])}</p>`;L.appendChild(d)});setTimeout(onScroll,50)}
 
 /* ---- 3D телефон ---- */
-const MODELS={one:{n:'AIR One',w:190,h:400},mini:{n:'AIR Mini',w:160,h:337},max:{n:'AIR Max',w:210,h:442}};
+const MODELS={one:{n:'AIR One',w:190,h:400},mini:{n:'AIR Mini',w:160,h:337},max:{n:'AIR Max',w:210,h:442},fold:{n:'AIR Fold',w:300,h:340},flip:{n:'AIR Flip',w:170,h:410}};
+const isFold=m=>m==='fold'||m==='flip';
 const COLORS=[['#F7F6F1','Белая','White'],['#F6BC1F','Жёлтая','Yellow'],['#F0749A','Розовая','Pink'],['#7fd6b3','Мятная','Mint'],['#8CC7F3','Небесная','Sky'],['#B7A6E6','Сирень','Lilac'],['#C9A27A','Крафт','Kraft']];
 const PATS=[['none','Чистая','Plain'],['news','Газета','Newspaper'],['grid','Клетка','Grid'],['dots','Горох','Dots'],['stars','Звёзды','Stars']];
-const cfg={model:'one',color:0,pat:1,cams:2,eng:''};
+const cfg={model:'one',color:0,pat:1,cams:2,eng:'',hinge:'paper'};
 let liveOn=false,ry=-25,rx=-6,tryy=-25,trx=-6,drag=null,idle=0;
 const AIRURL=location.origin+location.pathname.replace(/site\/?(index\.html)?$/,'');
 function patCSS(p){return {none:'none',news:'repeating-linear-gradient(180deg,rgba(40,40,60,.18) 0 2px,transparent 2px 9px)',grid:'linear-gradient(rgba(20,42,99,.25) 1px,transparent 1px),linear-gradient(90deg,rgba(20,42,99,.25) 1px,transparent 1px);background-size:18px 18px',dots:'radial-gradient(rgba(20,42,99,.3) 2.5px,transparent 3px);background-size:16px 16px',stars:'radial-gradient(rgba(255,255,255,.85) 3px,transparent 3.5px),radial-gradient(rgba(20,42,99,.25) 2px,transparent 2.5px);background-size:34px 34px,22px 22px;background-position:0 0,11px 17px'}[p]}
-function buildPhone(){phoneInto($('#ph'),cfg);updateMock();if(liveOn)mountDemo()}
+function buildPhone(){phoneInto($('#ph'),cfg);$('#fzBtn').style.display=isFold(cfg.model)?'':'none';$('#fzBtn').textContent=t('Открыть / Закрыть','Open / Close');updateMock();if(liveOn)mountDemo()}
 function phoneInto(ph,cfg){
+ ph._fz=null;if(isFold(cfg.model))return foldInto(ph,cfg);
  const m=MODELS[cfg.model],col=COLORS[cfg.color][0];
  ph.style.setProperty('--w',m.w+'px');ph.style.setProperty('--h',m.h+'px');ph.style.setProperty('--pc',col);
  ph.innerHTML='';const L=12,gap=2;
@@ -531,36 +555,44 @@ const scene=$('#scene');
 scene.addEventListener('pointerdown',e=>{if(e.target.closest('.ctrls')||e.target.closest('iframe'))return;drag={x:e.clientX,y:e.clientY,ry:tryy,rx:trx};idle=0;scene.setPointerCapture(e.pointerId)});
 scene.addEventListener('pointermove',e=>{if(!drag)return;tryy=drag.ry+(e.clientX-drag.x)*.6;trx=Math.max(-40,Math.min(40,drag.rx-(e.clientY-drag.y)*.3))});
 scene.addEventListener('pointerup',()=>{if(drag)rustle(.1,.1);drag=null;idle=0});
-(function loop(){idle++;if(!drag&&idle>260&&!liveOn)tryy+=.25;ry+=(tryy-ry)*.12;rx+=(trx-rx)*.12;$('#ph').style.transform=`rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;requestAnimationFrame(loop)})();
+(function loop(){idle++;if(!drag&&idle>260&&!liveOn)tryy+=.25;ry+=(tryy-ry)*.12;rx+=(trx-rx)*.12;if($('#ph')._fz)$('#ph')._fz.step();$('#ph').style.transform=`rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;requestAnimationFrame(loop)})();
 
 /* ---- конфигуратор ---- */
 function chip(par,label,on,fn){const b=document.createElement('button');b.className='chip'+(on?' on':'');b.textContent=label;b.onclick=()=>{fn();buildConfUI();buildPhone();price();rustle(.1,.08)};par.appendChild(b)}
 function buildConfUI(){
- ['#cModel','#cColor','#cPat','#cCam'].forEach(s=>$(s).innerHTML='');
- Object.keys(MODELS).forEach(k=>chip($('#cModel'),MODELS[k].n,cfg.model===k,()=>cfg.model=k));
+ ['#cModel','#cColor','#cPat','#cCam','#cForm','#cHinge'].forEach(s=>$(s).innerHTML='');
+ const F=isFold(cfg.model);$('#rForm').style.display=F?'':'none';$('#rHinge').style.display=F?'':'none';
+ ['mini','one','max'].forEach(k=>chip($('#cModel'),MODELS[k].n,cfg.model===k,()=>cfg.model=k));
+ chip($('#cModel'),t('✨ Складной','✨ Foldable'),F,()=>{if(!isFold(cfg.model))cfg.model='fold'});
+ if(F){
+  chip($('#cForm'),'📖 Fold — '+t('как книжка','like a book'),cfg.model==='fold',()=>cfg.model='fold');
+  chip($('#cForm'),'📱 Flip — '+t('раскладушка','clamshell'),cfg.model==='flip',()=>cfg.model='flip');
+  chip($('#cHinge'),t('Бумажный','Paper'),cfg.hinge!=='gold',()=>cfg.hinge='paper');
+  chip($('#cHinge'),t('Золотой +1 €','Gold +1 €'),cfg.hinge==='gold',()=>cfg.hinge='gold');
+ }
  COLORS.forEach((c,i)=>{const b=document.createElement('button');b.className='sw'+(cfg.color===i?' on':'');b.style.background=c[0];b.title=t(c[1],c[2]);b.onclick=()=>{cfg.color=i;buildConfUI();buildPhone();rustle(.1,.08)};$('#cColor').appendChild(b)});
  PATS.forEach((p,i)=>chip($('#cPat'),t(p[1],p[2]),cfg.pat===i,()=>cfg.pat=i));
  [1,2,3].forEach(n=>chip($('#cCam'),n+' ✦',cfg.cams===n,()=>cfg.cams=n));
 }
-function calc(c=cfg){return PRICES.models[c.model]+PRICES.pattern[PATS[c.pat][0]]+(c.cams-1)*PRICES.camera+(c.eng?PRICES.engrave:0)}
-function price(){$('#priceTxt').textContent=t('Цена (с учётом надписи и камер)','Price (incl. engraving & cameras)');$('#priceVal').textContent=money(calc())}
+function calc(c=cfg){return PRICES.models[c.model]+PRICES.pattern[PATS[c.pat][0]]+(c.cams-1)*PRICES.camera+(c.eng?PRICES.engrave:0)+(isFold(c.model)&&c.hinge==='gold'?PRICES.hinge:0)}
+function price(){$('#priceTxt').textContent=t('Цена (с учётом надписи и камер)','Price (incl. engraving & cameras)');$('#priceVal').innerHTML=priceHTML(cfg)}
 $('#cEng').oninput=e=>{cfg.eng=e.target.value;price();const el=document.querySelector('.engr');if(el)el.textContent=cfg.eng};
 $('#rand').onclick=()=>{cfg.model=Object.keys(MODELS)[Math.floor(Math.random()*3)];cfg.color=Math.floor(Math.random()*COLORS.length);cfg.pat=Math.floor(Math.random()*PATS.length);cfg.cams=1+Math.floor(Math.random()*3);buildConfUI();buildPhone();price();tryy+=180;rustle(.15,.2);ding(700)};
 
 /* ---- корзина ---- */
 let cart=JSON.parse(localStorage.getItem('air_cart')||'[]');
 const saveCart=()=>localStorage.setItem('air_cart',JSON.stringify(cart));
-function desc(c){return `${c.ed||MODELS[c.model].n},${t('бумага','paper')} ${t(COLORS[c.color][1],COLORS[c.color][2]).toLowerCase()}, ${t('узор','pattern')} «${t(PATS[c.pat][1],PATS[c.pat][2])}», ${t('камер','cameras')}: ${c.cams}${c.eng?`, ${t('надпись','engraving')} «${c.eng}»`:''}`}
+function desc(c){return `${c.ed||MODELS[c.model].n},${t('бумага','paper')} ${t(COLORS[c.color][1],COLORS[c.color][2]).toLowerCase()}, ${t('узор','pattern')} «${t(PATS[c.pat][1],PATS[c.pat][2])}», ${t('камер','cameras')}: ${c.cams}${c.eng?`, ${t('надпись','engraving')} «${c.eng}»`:''}${isFold(c.model)&&c.hinge==='gold'?', '+t('золотой шарнир','gold hinge'):''}`}
 function renderCart(){
  $('#cartN').textContent=cart.reduce((a,c)=>a+c.q,0);$('#cartEmpty').style.display=cart.length?'none':'';$('#cartForm').style.display=cart.length?'':'none';
- $('#cartItems').innerHTML=cart.map((c,i)=>`<div class="item"><i style="background:${COLORS[c.color][0]}"></i><div><b>${desc(c).split(',')[0]}</b><br>${desc(c).split(',').slice(1).join(',')}<br><b>${money(calc(c)*c.q)}</b></div><div class="qty"><button data-i="${i}" data-d="-1">−</button>${c.q}<button data-i="${i}" data-d="1">+</button></div></div>`).join('');
+ $('#cartItems').innerHTML=cart.map((c,i)=>`<div class="item"><i style="background:${COLORS[c.color][0]}"></i><div><b>${desc(c).split(',')[0]}</b><br>${desc(c).split(',').slice(1).join(',')}<br><b>${priceHTML(c,c.q)}</b></div><div class="qty"><button data-i="${i}" data-d="-1">−</button>${c.q}<button data-i="${i}" data-d="1">+</button></div></div>`).join('');
  $$('#cartItems .qty button').forEach(b=>b.onclick=()=>{const c=cart[+b.dataset.i];c.q+=+b.dataset.d;if(c.q<=0)cart.splice(+b.dataset.i,1);saveCart();renderCart();rustle(.1,.08)});
- $('#cartTotal').textContent=money(cart.reduce((a,c)=>a+calc(c)*c.q,0));
+ {const base=cart.reduce((a,c)=>a+calc(c)*c.q,0),tot=cart.reduce((a,c)=>a+unit(c)*c.q,0);$('#cartTotal').innerHTML=tot!==base?`<s style="opacity:.55;font-size:.6em;font-weight:400">${money(base)}</s> ${money(tot)}`:money(tot)}
 }
 function cartOpen(on){$('#cart').classList.toggle('on',on);$('#cartBack').classList.toggle('on',on);rustle(.15,.2)}
 $('#cartBtn').onclick=()=>cartOpen(true);$('#cartX').onclick=()=>cartOpen(false);$('#cartBack').onclick=()=>cartOpen(false);
 $('#addCart').onclick=()=>{addToCartRaw({...cfg,ed:''});ding(900);confetti($('#addCart'),18);toast(t('Добавлено в корзину ✈️','Added to cart ✈️'));$('#cartBtn').animate([{transform:'scale(1.3) rotate(-10deg)'},{transform:'scale(1)'}],{duration:350})};
-function orderText(){return `${t('Заказ AIR','AIR order')}:\n`+cart.map((c,i)=>`${i+1}) ${desc(c)} — ${c.q} ${t('шт','pcs')} × ${money(calc(c))}`).join('\n')+`\n${t('Итого','Total')}: ${money(cart.reduce((a,c)=>a+calc(c)*c.q,0))}\n${t('Имя','Name')}: ${$('#oName').value}\n${t('Контакт','Contact')}: ${$('#oContact').value}\n${t('Комментарий','Comment')}: ${$('#oNote').value}`}
+function orderText(){const tot=cart.reduce((a,c)=>a+unit(c)*c.q,0),base=cart.reduce((a,c)=>a+calc(c)*c.q,0);return `${t('Заказ AIR','AIR order')}:\n`+cart.map((c,i)=>{const p=pctFor(c);return `${i+1}) ${desc(c)} — ${c.q} ${t('шт','pcs')} × ${money(unit(c))}${p?` (−${p}%)`:''}`}).join('\n')+`\n${t('Итого','Total')}: ${money(tot)}${tot!==base?` (${t('без скидки','before discount')} ${money(base)})`:''}${promo&&tot!==base?`\n${t('Промокод','Promo code')}: ${promo}`:''}\n${t('Имя','Name')}: ${$('#oName').value}\n${t('Контакт','Contact')}: ${$('#oContact').value}\n${t('Комментарий','Comment')}: ${$('#oNote').value}`}
 function needInfo(){if(!$('#oName').value.trim()||!$('#oContact').value.trim()){toast(t('Напиши имя и контакт','Please add your name and contact'));return true}return false}
 $('#sendWA').onclick=()=>{if(needInfo())return;window.open(`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(orderText())}`,'_blank')};
 $('#sendTG').onclick=()=>{if(needInfo())return;window.open(CONTACT.telegram?`https://t.me/${CONTACT.telegram}`:`https://t.me/share/url?url=${encodeURIComponent(location.href)}&text=${encodeURIComponent(orderText())}`,'_blank');if(CONTACT.telegram)navigator.clipboard&&navigator.clipboard.writeText(orderText())};
@@ -603,13 +635,143 @@ $('#hp').onclick=()=>{rustle(.2,.2);confetti($('#hp'),20)};
  loop();
 })();
 
+/* ---- складные AIR: Fold (книжка) и Flip (раскладушка) ---- */
+function mkPanel(w,h,c,o){
+ const el=document.createElement('div');el.className='pn';el.style.cssText=`position:absolute;width:${w}px;height:${h}px;transform-style:preserve-3d;--r:${o.r||24}px`;
+ const L=12,gap=2;
+ for(let i=0;i<L;i++){const d=document.createElement('div');d.className='lay';d.style.transform=`translateZ(${((i-(L-1)/2)*gap).toFixed(1)}px)`;el.appendChild(d)}
+ const f=document.createElement('div');f.className='face front';f.style.transform=`translateZ(${L/2*gap+.5}px)`;
+ f.innerHTML=o.front==='mock'?'<div class="screen"><div class="mock"></div></div>':o.front==='paper'?'<div class="paperp"><b>AIR</b><span>✈️</span><i>Заметки</i></div>':'<div class="keysp">'+['1','2','3','4','5','6','7','8','9','*','0','#'].map(k=>`<i>${k}</i>`).join('')+'</div>';
+ el.appendChild(f);
+ const b=document.createElement('div');b.className='face back';b.style.transform=`translateZ(${-L/2*gap-.5}px) rotateY(180deg)`;
+ const p=patCSS(PATS[c.pat][0]);
+ b.innerHTML=`<div class="pat" style="background-image:${p.split(';')[0]};${p.split(';').slice(1).join(';')}"></div>${o.cams?`<div class="cams">${'<i></i>'.repeat(o.cams)}</div>`:''}${o.eng!=null?`<div class="engr">${esc(o.eng)}</div>`:''}<div class="logo">AIR</div>`;
+ el.appendChild(b);return el;
+}
+function foldInto(ph,c){
+ const book=c.model==='fold',T=24,W=book?150:170,H=book?340:205;
+ ph.style.setProperty('--w',(book?W*2:W)+'px');ph.style.setProperty('--h',(book?H:H*2)+'px');ph.style.setProperty('--pc',COLORS[c.color][0]);
+ ph.innerHTML='';
+ const fz=document.createElement('div');fz.style.cssText='position:absolute;inset:0;transform-style:preserve-3d';ph.appendChild(fz);
+ const fixed=mkPanel(W,H,c,{front:book?'mock':'keys',cams:0,eng:c.eng||'',r:24}),mov=mkPanel(W,H,c,{front:book?'paper':'mock',cams:c.cams,eng:null,r:24});
+ const piv=document.createElement('div'),hg=document.createElement('div');piv.style.cssText='position:absolute;transform-style:preserve-3d';
+ const gold=c.hinge==='gold',grad=(a)=>gold?`linear-gradient(${a},#b8841a,#ffe27a,#b8841a)`:`linear-gradient(${a},#cfc8b0,#fff,#cfc8b0)`;
+ if(book){fixed.style.left='50%';fixed.style.top='0';piv.style.cssText+=`;left:50%;top:0;width:0;height:${H}px;transform-origin:0 50%`;mov.style.left=`-${W}px`;mov.style.top='0';
+  hg.style.cssText=`position:absolute;left:50%;top:8px;width:12px;height:${H-16}px;margin-left:-6px;border-radius:6px;background:${grad('90deg')};box-shadow:0 0 6px rgba(0,0,0,.3);transform:translateZ(0)`}
+ else{fixed.style.left='0';fixed.style.top='50%';piv.style.cssText+=`;left:0;top:50%;width:${W}px;height:0;transform-origin:50% 0`;mov.style.left='0';mov.style.top=`-${H}px`;
+  hg.style.cssText=`position:absolute;top:50%;left:8px;height:12px;width:${W-16}px;margin-top:-6px;border-radius:6px;background:${grad('180deg')};box-shadow:0 0 6px rgba(0,0,0,.3);transform:translateZ(0)`}
+ piv.appendChild(mov);fz.appendChild(fixed);fz.appendChild(piv);fz.appendChild(hg);
+ const ctrl={cur:0,tgt:0,step(){
+  this.cur+=(this.tgt-this.cur)*.12;if(Math.abs(this.tgt-this.cur)<.002)this.cur=this.tgt;const p=this.cur,a=180*p;
+  if(book){piv.style.transform=`translateZ(${(T*p).toFixed(1)}px) rotateY(${a.toFixed(1)}deg)`;fz.style.transform=`translateX(${(-W/2*p).toFixed(1)}px)`}
+  else{piv.style.transform=`translateZ(${(T*p).toFixed(1)}px) rotateX(${(-a).toFixed(1)}deg)`;fz.style.transform=`translateY(${(-H/2*p).toFixed(1)}px)`}
+ }};
+ ph._fz=ctrl;ctrl.step();return ph;
+}
+
+/* ---- скидки и режим создателя ---- */
+const CREATOR_HASH='6181d5c7d9058310d015c1df04a4b83a2d009b2ef1329bbb72368108be0f8d2c',GH_REPO='vvv512/air-os';
+let creator=localStorage.getItem('air_creator')==='1',DISC_REMOTE=[],DISC_DRAFT=null,promo=localStorage.getItem('air_promo')||'';
+try{DISC_DRAFT=JSON.parse(localStorage.getItem('air_disc_draft')||'null')}catch(e){}
+const discList=()=>creator&&DISC_DRAFT?DISC_DRAFT:DISC_REMOTE;
+const dActive=d=>{const n=Date.now();return d.on!==false&&d.percent>0&&(!d.from||n>=Date.parse(d.from))&&(!d.to||n<=Date.parse(d.to)+86399000)};
+const dFits=(d,c)=>!d.target||d.target==='all'||d.target===c.model||(d.target==='fold'&&isFold(c.model));
+function appliedFor(c){let best=null;for(const d of discList()){if(!dActive(d)||!dFits(d,c))continue;if(d.code&&!(promo&&d.code.toLowerCase()===promo.toLowerCase()))continue;if(!best||d.percent>best.percent)best=d}return best}
+const pctFor=c=>{const d=appliedFor(c);return d?d.percent:0};
+const unit=c=>Math.round(calc(c)*(1-pctFor(c)/100)*100)/100;
+function priceHTML(c,q=1){const b=calc(c)*q,u=unit(c)*q;return b!==u?`<s style="opacity:.55;font-size:.6em;font-weight:400">${money(b)}</s> ${money(u)}`:money(b)}
+function renderSale(){
+ const el=$('#sale'),ds=discList().filter(d=>dActive(d)&&!d.code).sort((a,b)=>b.percent-a.percent);
+ if(!ds.length){el.style.display='none';return}
+ const d=ds[0],what={all:t('на все AIR','off every AIR'),fold:t('на складные AIR','off foldable AIRs')}[d.target||'all']||t('на ','off ')+(MODELS[d.target]?MODELS[d.target].n:''),
+  end=d.to?` · ${t('до','until')} ${new Date(d.to).toLocaleDateString(lang==='en'?'en-GB':'ru-RU',{day:'numeric',month:'long'})}`:'';
+ el.innerHTML=`🔥 ${esc(lang==='en'&&d.name_en?d.name_en:d.name)}: −${d.percent}% ${what}${end}`;el.style.display='block';
+}
+function refreshPrices(){price();renderEditions();renderCart();renderSale();renderCompare()}
+async function loadDisc(){try{const r=await fetch('discounts.json',{cache:'no-cache'});if(r.ok)DISC_REMOTE=await r.json()}catch(e){}
+ if(promo&&!discList().some(d=>d.code&&dActive(d)&&d.code.toLowerCase()===promo.toLowerCase())){promo='';localStorage.removeItem('air_promo')}
+ refreshPrices()}
+$('#promoBtn').onclick=()=>{
+ const v=$('#oPromo').value.trim(),ok=v&&discList().some(d=>d.code&&dActive(d)&&d.code.toLowerCase()===v.toLowerCase());
+ if(ok){promo=v;localStorage.setItem('air_promo',v);$('#promoMsg').textContent=t('Промокод применён ✅','Promo code applied ✅');ding(900);confetti($('#promoBtn'),14)}
+ else{promo='';localStorage.removeItem('air_promo');$('#promoMsg').textContent=v?t('Такого промокода нет или он не действует','This promo code does not exist or has expired'):''}
+ refreshPrices();
+};
+
+/* вход: 3 быстрых нажатия на AIR вверху → внизу появляется «Коды» */
+const logoClicks=[];
+$('#logo').addEventListener('click',()=>{const n=Date.now();logoClicks.push(n);while(logoClicks.length&&n-logoClicks[0]>1500)logoClicks.shift();
+ if(logoClicks.length>=3){logoClicks.length=0;localStorage.setItem('air_codes','1');codesUI();toast(t('🔑 Внизу страницы появилась кнопка «Коды»','🔑 A “Codes” button appeared at the bottom of the page'))}});
+function codesUI(){const b=$('#codesBtn');b.style.display=(localStorage.getItem('air_codes')==='1'||creator)?'':'none';b.textContent=creator?'👑 '+t('Создатель','Creator'):'🔑 '+t('Коды','Codes');
+ let cr=$('#bCrown');if(creator&&!cr){cr=document.createElement('button');cr.id='bCrown';cr.textContent='👑';cr.title='Режим создателя';cr.onclick=openCreator;$('#top').prepend(cr)}if(!creator&&cr)cr.remove()}
+const openCode=()=>{$('#codeDlg').classList.add('on');$('#codeIn').value='';setTimeout(()=>$('#codeIn').focus(),50);rustle()};
+const closeCode=()=>$('#codeDlg').classList.remove('on');
+$('#codesBtn').onclick=()=>creator?openCreator():openCode();$('#codeX').onclick=closeCode;
+$('#codeIn').addEventListener('keydown',e=>{if(e.key==='Enter')submitCode()});$('#codeOk').onclick=submitCode;
+async function submitCode(){
+ const v=$('#codeIn').value.trim();if(!v)return;let h='';
+ try{h=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v.toUpperCase())))].map(b=>b.toString(16).padStart(2,'0')).join('')}catch(e){toast(t('Нужна страница с https','Needs an https page'));return}
+ if(h===CREATOR_HASH){creator=true;localStorage.setItem('air_creator','1');closeCode();codesUI();refreshPrices();confetti(null,70);ding(1100);toast(t('👑 Теперь ты создатель!','👑 You are the creator now!'));setTimeout(openCreator,500);return}
+ if(discList().some(d=>d.code&&dActive(d)&&d.code.toLowerCase()===v.toLowerCase())){promo=v;localStorage.setItem('air_promo',v);$('#oPromo').value=v;closeCode();refreshPrices();ding(900);toast(t('Промокод применён ✅','Promo code applied ✅'));return}
+ toast(t('Неверный код','Wrong code'));
+}
+/* панель создателя */
+let cdraft=[];
+const saveDraft=()=>{DISC_DRAFT=cdraft;localStorage.setItem('air_disc_draft',JSON.stringify(cdraft));refreshPrices()};
+function openCreator(){
+ cdraft=JSON.parse(JSON.stringify(DISC_DRAFT||DISC_REMOTE));$('#cr').classList.add('on');drawCreator();
+}
+function drawCreator(){
+ const box=$('#crBox'),opts=[['all','Все AIR'],['mini','AIR Mini'],['one','AIR One'],['max','AIR Max'],['fold','Складные (Fold и Flip)']];
+ const presets=[['Чёрная пятница',30,''],['Новый год',20,''],['Только сегодня',10,''],['Промокод для друга',15,'AIR15']];
+ box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><h3 style="font-size:32px">👑 Режим создателя</h3><button class="pill" id="crX">✕</button></div>
+ <p style="color:var(--mute);margin:6px 0 14px;line-height:1.5">Создавай скидки: они сразу видны тебе на сайте. Чтобы увидели все, нажми «Опубликовать для всех».</p>
+ <div id="crList"></div>
+ <div class="chips" style="margin-bottom:12px">${presets.map((p,i)=>`<button class="chip" data-pr="${i}">+ ${p[0]} −${p[1]}%</button>`).join('')}<button class="chip on" id="crAdd">+ Своя скидка</button></div>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="cta" id="crPub" style="margin:0;padding:12px 22px">Опубликовать для всех ✈️</button><button class="pill" id="crCopy">Скопировать JSON</button><button class="pill" id="crReset">Сбросить черновик</button><button class="pill" id="crOut">Выйти</button></div>
+ <details><summary>Как опубликовать для всех</summary><p>Нужен «токен» GitHub — это ключ, который разрешает сайту обновлять файл скидок. Он хранится только в этом браузере.<br>1) Открой github.com/settings/personal-access-tokens/new<br>2) Repository access → Only select repositories → air-os<br>3) Permissions → Contents → Read and write<br>4) Нажми Generate token и вставь его ниже. Или просто нажми «Скопировать JSON» и отправь его мне — я выложу.</p><input class="inp" id="ghTok" type="password" placeholder="Токен GitHub" autocomplete="off" value="${localStorage.getItem('air_gh')||''}"></details>`;
+ const list=$('#crList');
+ cdraft.forEach((d,i)=>{const row=document.createElement('div');row.className='dsc';
+  row.innerHTML=`<div style="display:flex;gap:8px;align-items:center"><input class="inp" data-k="name" value="${esc(d.name||'')}" placeholder="Название, например «Чёрная пятница»"><label style="display:flex;gap:6px;align-items:center;white-space:nowrap;margin:0"><input type="checkbox" data-k="on" ${d.on!==false?'checked':''}>вкл</label><button class="pill" data-del="${i}">🗑</button></div>
+  <div class="g2"><div><label>Скидка, %</label><input class="inp" type="number" min="1" max="90" data-k="percent" value="${d.percent||''}"></div><div><label>Промокод (необязательно)</label><input class="inp" data-k="code" value="${esc(d.code||'')}" placeholder="например AIR15"></div><div><label>На что</label><select class="inp" data-k="target">${opts.map(o=>`<option value="${o[0]}" ${(d.target||'all')===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div><div></div><div><label>С даты</label><input class="inp" type="date" data-k="from" value="${d.from||''}"></div><div><label>До даты</label><input class="inp" type="date" data-k="to" value="${d.to||''}"></div></div>
+  <div style="font-size:12px;color:var(--mute);margin-top:8px">${d.code?'Скидка действует, когда покупатель введёт промокод.':'Без промокода скидка применяется сама и показывается плашкой сверху.'}</div>`;
+  row.querySelectorAll('[data-k]').forEach(el=>{const ev=el.type==='checkbox'||el.tagName==='SELECT'?'change':'input';el.addEventListener(ev,()=>{const k=el.dataset.k;cdraft[i][k]=el.type==='checkbox'?el.checked:k==='percent'?Math.max(0,Math.min(90,parseInt(el.value)||0)):el.value;saveDraft();if(k==='code'||k==='target')drawCreator()})});
+  row.querySelector('[data-del]').onclick=()=>{cdraft.splice(i,1);saveDraft();drawCreator();sfx_()};
+  list.appendChild(row)});
+ if(!cdraft.length)list.innerHTML='<div style="text-align:center;color:var(--mute);padding:18px">Пока нет скидок. Нажми кнопку ниже, например «Чёрная пятница −30%».</div>';
+ const add=(n,p,c)=>{cdraft.push({id:'d'+Date.now(),name:n,name_en:'',percent:p,code:c,target:'all',from:'',to:'',on:true});saveDraft();drawCreator();ding(900)};
+ box.querySelectorAll('[data-pr]').forEach(b=>b.onclick=()=>{const p=presets[+b.dataset.pr];add(p[0],p[1],p[2])});
+ $('#crAdd').onclick=()=>add('Новая скидка',10,'');
+ $('#crX').onclick=()=>$('#cr').classList.remove('on');
+ $('#crCopy').onclick=async()=>{const j=JSON.stringify(clean(),null,2);try{await navigator.clipboard.writeText(j);toast('JSON скопирован ✅ Отправь его мне')}catch(e){prompt('Скопируй:',j)}};
+ $('#crReset').onclick=()=>{DISC_DRAFT=null;localStorage.removeItem('air_disc_draft');refreshPrices();openCreator();toast('Черновик сброшен: показываю то, что опубликовано')};
+ $('#crOut').onclick=()=>{creator=false;localStorage.removeItem('air_creator');$('#cr').classList.remove('on');codesUI();refreshPrices();toast('Режим создателя выключен')};
+ $('#ghTok').oninput=e=>localStorage.setItem('air_gh',e.target.value.trim());
+ $('#crPub').onclick=publishDisc;
+}
+const sfx_=()=>rustle(.2,.2);
+function clean(){return cdraft.filter(d=>d.name&&d.percent>0).map(d=>({id:d.id||('d'+Math.random().toString(36).slice(2,7)),name:d.name,name_en:d.name_en||'',percent:d.percent,code:(d.code||'').trim(),target:d.target||'all',from:d.from||'',to:d.to||'',on:d.on!==false}))}
+async function publishDisc(){
+ const tk=localStorage.getItem('air_gh');if(!tk){toast('Вставь токен GitHub (см. «Как опубликовать для всех») или нажми «Скопировать JSON»');return}
+ const b=$('#crPub');b.disabled=true;b.textContent='Публикую…';
+ const api=`https://api.github.com/repos/${GH_REPO}/contents/site/discounts.json`,H={Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'};
+ try{
+  let sha;const g=await fetch(api,{headers:H});if(g.ok)sha=(await g.json()).sha;else if(g.status===401||g.status===403)throw new Error('token');
+  const list=clean(),body={message:'Update discounts',content:btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2)))),sha};
+  const r=await fetch(api,{method:'PUT',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok)throw new Error('put '+r.status);
+  DISC_REMOTE=list;DISC_DRAFT=null;localStorage.removeItem('air_disc_draft');refreshPrices();confetti(null,60);ding(1000);toast('Опубликовано! Через минуту скидки увидят все 🎉');openCreator();
+ }catch(e){toast(String(e.message).includes('token')?'Токен не подошёл. Проверь права: Contents → Read and write':'Не получилось опубликовать. Нажми «Скопировать JSON» и отправь мне');b.disabled=false;b.textContent='Опубликовать для всех ✈️'}
+}
+function initCreatorUI(){codesUI()}
+
 /* ---- меню ---- */
 $('#menuBtn').onclick=()=>{$('#menuList').classList.toggle('on');rustle(.1,.1)};
 $$('#menuList a').forEach(a=>a.addEventListener('click',()=>$('#menuList').classList.remove('on')));
 document.addEventListener('click',e=>{if(!e.target.closest('#menuList')&&!e.target.closest('#menuBtn'))$('#menuList').classList.remove('on')});
 
 /* ---- заказ ---- */
-const ckey=c=>[c.ed||'',c.model,c.color,c.pat,c.cams,c.eng].join('|');
+const ckey=c=>[c.ed||'',c.model,c.color,c.pat,c.cams,c.eng,c.hinge||''].join('|');
 function addToCartRaw(c){const ex=cart.find(x=>ckey(x)===ckey(c));if(ex)ex.q++;else cart.push({...c,q:1});saveCart();renderCart()}
 const oneBtn=!!(CONTACT.whatsapp||CONTACT.formspree);
 $('#sendOrder').style.display=oneBtn?'':'none';$('#sendPills').style.display=oneBtn?'none':'flex';$('#sendEmail').style.display=CONTACT.email?'':'none';
@@ -628,7 +790,7 @@ function spinner(scene,ph,auto){
  scene.addEventListener('pointerdown',e=>{s.drag={x:e.clientX,y:e.clientY,ry:s.tr,rx:s.trx};s.idle=0;scene.setPointerCapture(e.pointerId)});
  scene.addEventListener('pointermove',e=>{if(!s.drag)return;s.tr=s.drag.ry+(e.clientX-s.drag.x)*.6;s.trx=Math.max(-40,Math.min(40,s.drag.rx-(e.clientY-s.drag.y)*.3))});
  scene.addEventListener('pointerup',()=>{s.drag=null;s.idle=0});
- (function loop(){if(!s.alive)return;s.idle++;if(!s.drag&&(auto||s.idle>200))s.tr+=.4;s.ry+=(s.tr-s.ry)*.12;s.rx+=(s.trx-s.rx)*.12;ph.style.transform=`rotateX(${s.rx.toFixed(2)}deg) rotateY(${s.ry.toFixed(2)}deg)`;requestAnimationFrame(loop)})();
+ (function loop(){if(!s.alive)return;s.idle++;if(!s.drag&&(auto||s.idle>200))s.tr+=.4;if(ph._fz)ph._fz.step();s.ry+=(s.tr-s.ry)*.12;s.rx+=(s.trx-s.rx)*.12;ph.style.transform=`rotateX(${s.rx.toFixed(2)}deg) rotateY(${s.ry.toFixed(2)}deg)`;requestAnimationFrame(loop)})();
  return s;
 }
 
@@ -640,32 +802,37 @@ const EDITIONS=[
  {ed:'AIR Mini «Сирень»',tag:['Сиреневая бумага со звёздами','Lilac paper with stars'],model:'mini',color:5,pat:4,cams:1,eng:''},
  {ed:'AIR Max «Небо»',tag:['Большой, небесный, чистый лист','Big, sky-blue, plain sheet'],model:'max',color:4,pat:0,cams:3,eng:''},
  {ed:'AIR Max «Крафт»',tag:['Крафтовая бумага и газетный шрифт','Kraft paper with a newspaper print'],model:'max',color:6,pat:1,cams:3,eng:''},
+ {ed:'AIR Fold «Книжка»',tag:['Раскрывается как книжка: слева заметки, справа экран','Opens like a book: notes on the left, the screen on the right'],model:'fold',color:1,pat:1,cams:2,eng:'',hinge:'gold'},
+ {ed:'AIR Flip «Ракушка»',tag:['Раскладушка: сверху экран, снизу бумажные кнопки','A clamshell: the screen on top, paper keys below'],model:'flip',color:2,pat:3,cams:2,eng:'',hinge:'paper'},
 ];
 function renderEditions(){
  const box=$('#cards');box.innerHTML='';
  EDITIONS.forEach(e=>{
   const d=document.createElement('div');d.className='card2';
-  d.innerHTML=`<div class="cph"><div class="sc"><div class="ph"></div></div></div><h3>${e.ed}</h3><p>${t(e.tag[0],e.tag[1])}</p><div class="price" style="margin:8px 0"><span>${t('Цена','Price')}</span><b style="font-size:30px">${money(calc(e))}</b></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="cta" style="margin:0;padding:11px 20px;font-size:15px">${t('Смотреть','View')}</button><button class="pill">${t('В корзину','Add')} 🛒</button></div>`;
-  phoneInto(d.querySelector('.ph'),e);d.querySelector('.sc').style.transform=`scale(${Math.min(1,235/MODELS[e.model].h)})`;
+  d.innerHTML=`<div class="cph"><div class="sc"><div class="ph"></div></div></div><h3>${e.ed}</h3><p>${t(e.tag[0],e.tag[1])}</p><div class="price" style="margin:8px 0"><span>${t('Цена','Price')}</span><b style="font-size:30px">${priceHTML(e)}</b></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="cta" style="margin:0;padding:11px 20px;font-size:15px">${t('Смотреть','View')}</button><button class="pill">${t('В корзину','Add')} 🛒</button></div>`;
+  phoneInto(d.querySelector('.ph'),e);d.querySelector('.sc').style.transform=`scale(${Math.min(1,235/MODELS[e.model].h,250/MODELS[e.model].w)})`;
   d.querySelector('.cta').onclick=()=>openModal(e);d.querySelector('.cph').onclick=()=>openModal(e);
   d.querySelector('.pill').onclick=()=>{addToCartRaw(e);ding(900);confetti(d.querySelector('.pill'),16);toast(t('Добавлено в корзину ✈️','Added to cart ✈️'))};
   box.appendChild(d);
  });
  updateMock();
 }
-(function sway(){(function f(now){document.querySelectorAll('.card2 .ph').forEach((ph,i)=>{ph.style.transform=`rotateX(-6deg) rotateY(${(-28+Math.sin(now/1300+i*1.1)*32).toFixed(1)}deg)`});requestAnimationFrame(f)})(0)})();
+(function sway(){(function f(now){document.querySelectorAll('.card2 .ph').forEach((ph,i)=>{ph.style.transform=`rotateX(-6deg) rotateY(${(-28+Math.sin(now/1300+i*1.1)*32).toFixed(1)}deg)`;if(ph._fz){ph._fz.tgt=Math.sin(now/2600+i)>.75?1:0;ph._fz.step()}});requestAnimationFrame(f)})(0)})();
 let mSpin=null,mCfg=null;
 function openModal(e){
  mCfg=e;$('#modal').classList.add('on');phoneInto($('#mph'),e);updateMock();
  $('#mName').textContent=e.ed;$('#mDesc').textContent=t(e.tag[0],e.tag[1]);
  $('#mSpecs').innerHTML=[MODELS[e.model].n,t(COLORS[e.color][1],COLORS[e.color][2]),t(PATS[e.pat][1],PATS[e.pat][2]),e.cams+' ✦'].map(s=>`<span class="chip on" style="cursor:default">${s}</span>`).join('');
- $('#mPrice').textContent=money(calc(e));$('#mAdd').textContent=t('В корзину 🛒','Add to cart 🛒');$('#mConf').textContent=t('Изменить в студии','Edit in studio');$('#mPriceT').textContent=t('Цена','Price');
+ $('#mFold').style.display=isFold(e.model)?'':'none';$('#mFold').textContent=t('Открыть / Закрыть','Open / Close');
+ $('#mPrice').innerHTML=priceHTML(e);$('#mAdd').textContent=t('В корзину 🛒','Add to cart 🛒');$('#mConf').textContent=t('Изменить в студии','Edit in studio');$('#mPriceT').textContent=t('Цена','Price');
  if(mSpin)mSpin.alive=false;mSpin=spinner($('#mscene'),$('#mph'),true);rustle();
 }
 function closeModal(){$('#modal').classList.remove('on');if(mSpin)mSpin.alive=false}
 $('#mClose').onclick=closeModal;$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
 $('#mAdd').onclick=()=>{addToCartRaw(mCfg);ding(900);confetti($('#mAdd'),18);toast(t('Добавлено в корзину ✈️','Added to cart ✈️'))};
-$('#mConf').onclick=()=>{cfg.model=mCfg.model;cfg.color=mCfg.color;cfg.pat=mCfg.pat;cfg.cams=mCfg.cams;cfg.eng=mCfg.eng;$('#cEng').value=cfg.eng;closeModal();buildConfUI();buildPhone();price();$('#stage').scrollIntoView({behavior:'smooth'})};
+$('#mFold').onclick=()=>{const z=$('#mph')._fz;if(z){z.tgt=z.tgt?0:1;rustle()}};
+$('#fzBtn').onclick=()=>{const z=$('#ph')._fz;if(z){z.tgt=z.tgt?0:1;rustle()}};
+$('#mConf').onclick=()=>{cfg.model=mCfg.model;cfg.color=mCfg.color;cfg.pat=mCfg.pat;cfg.cams=mCfg.cams;cfg.eng=mCfg.eng;cfg.hinge=mCfg.hinge||'paper';$('#cEng').value=cfg.eng;closeModal();buildConfUI();buildPhone();price();$('#stage').scrollIntoView({behavior:'smooth'})};
 addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();cartOpen(false)}});
 
 /* ---- бумажные новости ---- */
@@ -703,10 +870,10 @@ async function init360(){
 
 /* ---- сравнение моделей ---- */
 function renderCompare(){
- const SIZE={mini:['Компактный','Compact'],one:['Классический','Classic'],max:['Большой','Large']},
-  FOR={mini:['Лёгкий и маленький: в карман, первый AIR','Light and small: for the pocket, a first AIR'],one:['На каждый день: золотая середина','Everyday: the golden mean'],max:['Большой экран и три камеры','Big screen and three cameras']},
-  order=['mini','one','max'],from=m=>calc({model:m,pat:0,cams:1,eng:''}),to=m=>calc({model:m,pat:4,cams:3,eng:'x'}),row=(l,f)=>`<tr><td>${l}</td>${order.map(f).join('')}</tr>`;
- $('#cmp').innerHTML=`<thead><tr><th></th>${order.map(m=>`<th>${MODELS[m].n}</th>`).join('')}</tr></thead><tbody>`
+ const SIZE={mini:['Компактный','Compact'],one:['Классический','Classic'],max:['Большой','Large'],fold:['Складной','Foldable']},
+  FOR={mini:['Лёгкий и маленький: в карман, первый AIR','Light and small: for the pocket, a first AIR'],one:['На каждый день: золотая середина','Everyday: the golden mean'],max:['Большой экран и три камеры','Big screen and three cameras'],fold:['Раскрывается как книжка или раскладушка','Opens like a book or a clamshell']},
+  order=['mini','one','max','fold'],from=m=>calc({model:m,pat:0,cams:1,eng:''}),to=m=>calc({model:m,pat:4,cams:3,eng:'x',hinge:'gold'}),row=(l,f)=>`<tr><td>${l}</td>${order.map(f).join('')}</tr>`;
+ $('#cmp').innerHTML=`<thead><tr><th></th>${order.map(m=>`<th>${m==='fold'?'AIR Fold / Flip':MODELS[m].n}</th>`).join('')}</tr></thead><tbody>`
   +row(t('Размер','Size'),m=>`<td>${t(SIZE[m][0],SIZE[m][1])}</td>`)
   +row(t('Подойдёт','Best for'),m=>`<td>${t(FOR[m][0],FOR[m][1])}</td>`)
   +row(t('Цена от','Price from'),m=>`<td><b>${money(from(m))}</b></td>`)
@@ -726,7 +893,7 @@ function setupWA(){
 }
 
 /* ---- старт ---- */
-applyMode();applyLang();buildPhone();onScroll();loadNews();init360();
+applyMode();applyLang();buildPhone();onScroll();loadNews();init360();initCreatorUI();loadDisc();
 </script>
 </body>
 </html>
