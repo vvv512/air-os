@@ -1,5 +1,5 @@
 // AIR OS — service worker: офлайн-режим. Сначала сеть (свежая версия), если сети нет — из кэша.
-const V = 'air-v2.3';
+const V = 'air-v2.4';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './site/', './site/index.html'];
 
 self.addEventListener('install', e => {

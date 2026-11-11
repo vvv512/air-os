@@ -1,5 +1,29 @@
 [
   {
+    "date": "2026-11-11",
+    "tag": "AIR OS",
+    "title": "AIR OS 2.4: Фото, Достижения и питомец Самолётик",
+    "title_en": "AIR OS 2.4: Photos, Achievements and the pet Paper Plane",
+    "text": "В бумажной ОС появилось приложение «Фото»: все снимки в одной галерее, избранное, поиск по дате и слайд-шоу. За игры, фото и записи теперь дают значки в «Достижениях». А на главном экране поселился питомец Самолётик: его нужно кормить, играть с ним и укладывать спать. Если забыть о нём, он проголодается и пришлёт уведомление.",
+    "text_en": "The paper OS has a new Photos app: all your pictures in one gallery, favourites, search by date and a slideshow. Games, photos and recordings now earn badges in Achievements. And a pet called Paper Plane has moved onto the home screen: feed it, play with it and put it to bed. If you forget about it, it gets hungry and sends a notification."
+  },
+  {
+    "date": "2026-11-11",
+    "tag": "Сайт",
+    "title": "Сравнение моделей, «О нас» и вопрос в один клик",
+    "title_en": "Model comparison, About and a question in one click",
+    "text": "На сайте появилась таблица, которая помогает выбрать между AIR Mini, One и Max, и короткая схема «Как получить свой AIR». Теперь есть раздел «О нас» и кнопка WhatsApp внизу экрана: нажми, и откроется чат с нами.",
+    "text_en": "The site now has a table that helps you choose between AIR Mini, One and Max, and a short “How to get your AIR” guide. There is also an About section and a WhatsApp button at the bottom of the screen: tap it to open a chat with us."
+  },
+  {
+    "date": "2026-11-11",
+    "tag": "Заказ",
+    "title": "Заказ в один клик через WhatsApp",
+    "title_en": "Order in one click via WhatsApp",
+    "text": "Собрал телефон, нажал «Отправить заказ» — и открылся WhatsApp с готовым сообщением, адресованным нам. Остаётся нажать «Отправить». Цены теперь в евро: от 2 до 7 €.",
+    "text_en": "Built your phone, pressed “Send order” — and WhatsApp opens with the message ready, addressed to us. Just press Send. Prices are now in euros: from 2 to 7 €."
+  },
+  {
     "date": "2026-11-10",
     "tag": "AIR OS",
     "title": "AIR OS 2.3 работает без интернета",

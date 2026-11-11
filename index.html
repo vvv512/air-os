@@ -287,6 +287,20 @@ input.t,textarea.t{width:100%;border:1px solid var(--line);background:var(--card
 .qrs{background:#fff;border-radius:18px;padding:12px;width:180px;margin:10px auto}
 .qrs svg{width:100%;height:auto;display:block}
 .sel{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:12px;font-size:16px;font-family:inherit;outline:none;max-width:120px}
+/* pet + achievements */
+.bar2{display:flex;align-items:center;gap:10px;margin:6px 0}
+.bar2 span{font-size:20px}
+.bar2 div{flex:1;height:12px;border-radius:6px;background:var(--line);overflow:hidden}
+.bar2 i{display:block;height:100%;border-radius:6px;transition:width .5s}
+.eye{transform-box:fill-box;transform-origin:center;animation:blink 4s infinite}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+.agrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.ab{text-align:center;padding:14px 10px;border-radius:20px;background:var(--card);box-shadow:0 3px 12px rgba(30,60,110,.1);animation:cardin .35s both}
+.ab .e{font-size:38px;line-height:1.1}
+.ab b{display:block;margin-top:4px;font-size:14px}
+.ab small{display:block;opacity:.65;font-size:12px;line-height:1.3;margin-top:2px}
+.ab.lock{opacity:.5;filter:grayscale(1)}
+.heart{position:absolute;font-size:28px;pointer-events:none;animation:up 1s forwards}
 /* camera + recorder */
 .fold{position:relative}
 .fold:before{content:"";position:absolute;top:0;right:0;width:34px;height:34px;background:linear-gradient(225deg,var(--paper) 50%,rgba(0,0,0,.25) 50%);z-index:3;border-bottom-left-radius:8px;box-shadow:-3px 3px 6px rgba(0,0,0,.2);pointer-events:none}
@@ -333,7 +347,7 @@ input.t,textarea.t{width:100%;border:1px solid var(--line);background:var(--card
         <div class="wrow"><div class="widget sm" id="wcal"></div><div class="widget sm" id="wtask"></div></div>
         <div class="sect">ПРИЛОЖЕНИЯ</div><div class="grid" id="g1"></div>
       </div>
-      <div class="page" id="p2"><div class="widget" id="wweather" style="margin-top:2px"></div><div class="sect">ИНСТРУМЕНТЫ</div><div class="grid" id="g2"></div></div>
+      <div class="page" id="p2"><div class="wrow" style="margin-top:2px"><div class="widget sm" id="wweather"></div><div class="widget sm" id="wpet"></div></div><div class="sect">ИНСТРУМЕНТЫ</div><div class="grid" id="g2"></div></div>
       <div class="page" id="p3"><div style="height:6px"></div><div class="sect">ИГРЫ AIR</div><div class="grid" id="g3"></div></div>
     </div>
     <div id="dots"><i class="on"></i><i></i><i></i></div>
@@ -375,7 +389,7 @@ input.t,textarea.t{width:100%;border:1px solid var(--line);background:var(--card
 </div>
 
 <script>
-const VERSION='2.3';
+const VERSION='2.4';
 const $=s=>document.querySelector(s);
 const store={get(k,d){try{const v=localStorage.getItem('air_'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('air_'+k,JSON.stringify(v));return true}catch(e){return false}}};
 const PLANE='<svg viewBox="0 0 64 64"><path d="M4 30 60 6 44 58 32 40z" fill="#fff" stroke="#17325c" stroke-width="3" stroke-linejoin="round"/><path d="M60 6 32 40 30 54 44 58z" fill="#cfe6ff" stroke="#17325c" stroke-width="3" stroke-linejoin="round"/><path d="M32 40 60 6" stroke="#17325c" stroke-width="2.5"/></svg>';
@@ -497,6 +511,9 @@ const TOOLS=[
  {n:'AIR Store',bg:'linear-gradient(160deg,#6cc3ff,#6a5cff)',e:'🛍️',app:'store',keep:true},
  {n:'Эйр',bg:'linear-gradient(160deg,#c58bff,#ff6ab0)',e:'🤖',app:'assistant'},
  {n:'Погода',bg:'linear-gradient(160deg,#7fd6ff,#ffd86b)',e:'🌤️',app:'weather'},
+ {n:'Фото',bg:'linear-gradient(160deg,#ffd9a8,#ff8aa5 50%,#8a7dff)',e:'🖼️',app:'photos'},
+ {n:'Достижения',bg:'linear-gradient(160deg,#ffe36b,#ff9a00)',e:'🏅',app:'ach'},
+ {n:'Питомец',bg:'linear-gradient(160deg,#9be8b0,#2bb673)',e:'🐣',app:'pet'},
  {n:'Камера',bg:'linear-gradient(160deg,#6b7280,#1f2430)',e:'📷',app:'camera'},
  {n:'Диктофон',bg:'linear-gradient(160deg,#ff7a8a,#e0366c)',e:'🎙️',app:'recorder'},
  {n:'Будильник',bg:'linear-gradient(160deg,#ffb347,#ff6a3d)',e:'⏰',app:'alarm'},
@@ -614,7 +631,7 @@ function launch(a,ico){
 
 /* ===== ВИДЖЕТЫ И ЧАСЫ ===== */
 const MONTHS=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-function updateWidgets(){
+function updateWidgets(){try{renderPetWidget()}catch(e){}
  const d=new Date(),ev=store.get('events',{})[dk(d)]||[],tk=store.get('tasks',[]),done=tk.filter(t=>t.d).length,pct=tk.length?Math.round(done/tk.length*100):0;
  $('#wcal').innerHTML=`<div class="cwk">${d.toLocaleDateString('ru-RU',{weekday:'short'}).toUpperCase()}</div><div class="cwd">${d.getDate()}</div><div class="s" style="margin:0">${ev.length?ev.length+' событ.':'Свободный день'}</div>`;
  $('#wtask').innerHTML=`<div class="row"><div class="ring" style="--p:${pct}"><span>${done}/${tk.length}</span></div></div><div class="s" style="margin:4px 0 0">${tk.length?(done===tk.length?'Всё сделано! 🎉':'Задачи'):'Нет задач'}</div>`;
@@ -1010,9 +1027,9 @@ async function loadWeather(force){
 }
 function renderWxWidget(){
  const w=store.get('wx',null),el=$('#wweather');
- if(!w){el.innerHTML='<div><div class="t" style="font-size:24px;letter-spacing:0">🌤️ Погода</div><div class="s">Тапни и выбери город</div></div>';return}
+ if(!w){el.innerHTML='<div style="font-size:32px">🌤️</div><div class="s" style="margin:0;font-weight:800">Погода</div><div class="s" style="margin:0;font-size:12px">Выбери город</div>';return}
  const[e,txt]=WX_CODE(w.cur.weather_code);
- el.innerHTML=`<div><div class="t">${Math.round(w.cur.temperature_2m)}°</div><div class="s">${w.city} · ${txt}</div></div><div style="font-size:58px" class="wxe">${e}</div>`;
+ el.innerHTML=`<div class="row" style="gap:6px"><span class="wxe" style="font-size:32px">${e}</span><span style="font-size:30px;font-weight:800">${Math.round(w.cur.temperature_2m)}°</span></div><div class="s" style="margin:0;font-weight:800">${w.city}</div><div class="s" style="margin:0;font-size:12px">${txt}</div>`;
 }
 $('#wweather').addEventListener('click',()=>openApp({app:'weather'},$('#wweather')));
 
@@ -1089,7 +1106,7 @@ APP.assistant=function(root){
  const delay=ms=>new Promise(r=>setTimeout(r,ms));let alive=true;cleanups.push(()=>alive=false);
  ['Что ты умеешь?','Расскажи шутку','Который час?','Погода','Орёл или решка','Загадай загадку','Таймер 1 минута','Открой музыку','Интересный факт'].forEach(t=>{const b=document.createElement('button');b.className='chip';b.textContent=t;b.onclick=()=>send(t);$('#chips').appendChild(b)});
  async function send(txt){
-  txt=txt.trim();if(!txt)return;$('#ci').value='';add('me',txt);sfx.tap();
+  txt=txt.trim();if(!txt)return;$('#ci').value='';add('me',txt);sfx.tap();store.set('airmsgs',store.get('airmsgs',0)+1);
   const t=add('bot','');t.className='msg bot typing';t.innerHTML='<i></i><i></i><i></i>';
   await delay(450+Math.random()*500);if(!alive)return;
   let a;try{a=await airAnswer(txt)}catch(e){a='Что-то пошло не так 🙈'}
@@ -1101,7 +1118,7 @@ APP.assistant=function(root){
 };
 
 /* ===== AIR STORE ===== */
-const DESC={'WhatsApp':'Мессенджер','YouTube Детям':'Видео для детей','Brawl Stars':'Игра от Supercell','Roblox':'Миллионы игр','Карты':'Навигация','Календарь':'События и напоминания','Задачи':'Список дел с прогрессом','Музыка':'Мелодии, которые сочиняет телефон','Пианино':'Играй пальцами','Калькулятор':'Считает всё','Заметки':'Записывай идеи','Часы':'Секундомер и таймер','Рисовалка':'Рисуй на бумаге','Фонарик':'Экран-светильник','Эйр':'Умный помощник','Погода':'Прогноз на 5 дней','Самолётик':'Лети между облаками','2048':'Соединяй числа','Змейка':'Классика','Мемори':'Найди все пары','Крестики':'Играй против ИИ','Лови звёзды':'Быстрые тапы','Кликер':'Кто больше накликает','Сапёр':'Найди мины и не взорвись','Пинг-понг':'Матч против ИИ','Камера':'Фото с бумажными фильтрами','Диктофон':'Записывай голос','Тетрис':'Складывай блоки в линии','Бумажный бег':'Прыгай через ножницы','Будильник':'Звонит, пока AIR OS открыта','Конвертер':'Длина, вес, объём, температура','Оригами':'Складывай самолётики по шагам'};
+const DESC={'WhatsApp':'Мессенджер','YouTube Детям':'Видео для детей','Brawl Stars':'Игра от Supercell','Roblox':'Миллионы игр','Карты':'Навигация','Календарь':'События и напоминания','Задачи':'Список дел с прогрессом','Музыка':'Мелодии, которые сочиняет телефон','Пианино':'Играй пальцами','Калькулятор':'Считает всё','Заметки':'Записывай идеи','Часы':'Секундомер и таймер','Рисовалка':'Рисуй на бумаге','Фонарик':'Экран-светильник','Эйр':'Умный помощник','Погода':'Прогноз на 5 дней','Самолётик':'Лети между облаками','2048':'Соединяй числа','Змейка':'Классика','Мемори':'Найди все пары','Крестики':'Играй против ИИ','Лови звёзды':'Быстрые тапы','Кликер':'Кто больше накликает','Сапёр':'Найди мины и не взорвись','Пинг-понг':'Матч против ИИ','Камера':'Фото с бумажными фильтрами','Диктофон':'Записывай голос','Тетрис':'Складывай блоки в линии','Бумажный бег':'Прыгай через ножницы','Будильник':'Звонит, пока AIR OS открыта','Конвертер':'Длина, вес, объём, температура','Оригами':'Складывай самолётики по шагам','Фото':'Галерея, избранное и слайд-шоу','Достижения':'Значки за твои успехи','Питомец':'Бумажный друг, о котором надо заботиться'};
 APP.store=function(root){
  let cat='Все';const catOf=a=>a.g==='g3'?'Игры':a.g==='g2'?'Инструменты':'Приложения';
  function render(){
@@ -1546,6 +1563,128 @@ APP.runner=function(root){
 };
 
 applyLook();
+
+/* ===== ПРИЛОЖЕНИЕ «ФОТО» ===== */
+const escH=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+APP.photos=function(root){
+ let items=[],flt='all',day='',urls=[],alive=true,slide=null;
+ cleanups.push(()=>{alive=false;clearInterval(slide);urls.forEach(u=>URL.revokeObjectURL(u))});
+ async function load(){try{items=await DB.all('photo')}catch(e){items=[]}render()}
+ const list=()=>items.filter(p=>flt==='fav'?p.fav:flt==='today'?dk(new Date(p.t))===dk(new Date()):flt==='day'?(day&&dk(new Date(p.t))===day):true);
+ const url=p=>{const u=URL.createObjectURL(p.blob);urls.push(u);return u};
+ function render(){
+  if(!alive)return;urls.forEach(u=>URL.revokeObjectURL(u));urls=[];const L=list();
+  root.innerHTML=`<div class="pad"><div class="row" style="justify-content:space-between;margin-bottom:10px"><h2 style="margin:0">🖼️ Фото <small style="font-size:16px;opacity:.6">${L.length}</small></h2><div class="row"><button class="rnd" id="pa" title="Добавить фото">➕</button><button class="rnd" id="ps" title="Слайд-шоу">▶</button></div></div>
+  <div class="chips" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">${[['all','Все'],['fav','❤ Избранное'],['today','Сегодня']].map(([k,n])=>`<button class="chip" data-f="${k}" style="${flt===k?'background:var(--accent);color:#fff':''}">${n}</button>`).join('')}<input type="date" class="sel" id="pd" value="${day}" style="max-width:150px;padding:7px 10px;${flt==='day'?'outline:2px solid var(--accent)':''}"></div>
+  <div class="gal" id="pg"></div>${L.length?'':'<div style="opacity:.6;text-align:center;padding:30px">Здесь пока пусто. Сделай снимок в «Камере» или нажми ➕</div>'}<input type="file" id="pf2" accept="image/*" multiple hidden></div>`;
+  L.forEach((p,i)=>{const d=document.createElement('div');d.style.cssText=`background-image:url(${url(p)});position:relative;animation-delay:${Math.min(i,20)*25}ms`;if(p.fav)d.innerHTML='<span style="position:absolute;right:6px;top:4px;font-size:16px">❤️</span>';d.onclick=()=>{sfx.tap();view(L,i)};$('#pg').appendChild(d)});
+  root.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{sfx.tap();flt=b.dataset.f;render()});
+  $('#pd').onchange=e=>{day=e.target.value;flt=day?'day':'all';sfx.tap();render()};
+  $('#pa').onclick=()=>{sfx.tap();$('#pf2').click()};
+  $('#pf2').onchange=async e=>{
+   for(const f of e.target.files){await new Promise(res=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(async b=>{try{await DB.put({id:'p'+Date.now()+Math.random().toString(36).slice(2,6),k:'photo',t:f.lastModified||Date.now(),blob:b})}catch(x){}res()},'image/jpeg',.88)};im.onerror=res;im.src=fr.result};fr.readAsDataURL(f)})}
+   toast('Фото добавлены ✅');sfx.win();load();
+  };
+  $('#ps').onclick=()=>{if(!L.length){toast('Нет фото для слайд-шоу');return}sfx.tap();slideshow(L)};
+ }
+ function view(L,i){
+  const p=L[i],u=url(p),o=document.createElement('div');
+  o.style.cssText='position:absolute;inset:0;z-index:20;background:rgba(10,15,30,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;animation:cardin .25s both';
+  o.innerHTML=`<img src="${u}" style="max-width:92%;max-height:66%;border:8px solid #fff;border-radius:6px;box-shadow:0 14px 40px #000a"><div style="color:#fff;opacity:.7;font-size:13px">${new Date(p.t).toLocaleString('ru-RU',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})}</div><div class="row"><button class="rnd" id="v0">‹</button><button class="rnd" id="v1">${p.fav?'❤️':'🤍'}</button><button class="rnd" id="v2">🖼️</button><button class="rnd" id="v3">⬆️</button><button class="rnd" id="v4">🗑</button><button class="rnd" id="v5">›</button></div><button class="rnd" id="vx" style="position:absolute;top:10px;right:10px">✕</button>`;
+  $('#appbody').appendChild(o);
+  const go=d=>{o.remove();view(L,(i+d+L.length)%L.length)};
+  $('#v0').onclick=()=>{sfx.tap();go(-1)};$('#v5').onclick=()=>{sfx.tap();go(1)};$('#vx').onclick=()=>{sfx.tap();o.remove()};
+  $('#v1').onclick=async()=>{p.fav=!p.fav;try{await DB.put(p)}catch(e){}$('#v1').textContent=p.fav?'❤️':'🤍';tone(p.fav?900:500,.1,'triangle',.12)};
+  $('#v2').onclick=()=>{setPhoto(p.blob);o.remove()};
+  $('#v3').onclick=()=>shareBlob(p.blob,'air-photo.jpg','image/jpeg');
+  $('#v4').onclick=async()=>{sfx.crumple();try{await DB.del(p.id)}catch(e){}o.remove();load()};
+  let sx;o.addEventListener('pointerdown',e=>sx=e.clientX);o.addEventListener('pointerup',e=>{const d=e.clientX-sx;if(Math.abs(d)>60)go(d<0?1:-1)});
+ }
+ function slideshow(L){
+  const o=document.createElement('div');o.style.cssText='position:absolute;inset:0;z-index:25;background:#000;display:grid;place-items:center';
+  o.innerHTML='<img style="max-width:100%;max-height:100%"><div style="position:absolute;bottom:14px;color:#fff;opacity:.6;font-size:13px">Тапни, чтобы остановить</div>';$('#appbody').appendChild(o);
+  const img=o.querySelector('img');let k=0;
+  const next=()=>{img.src=url(L[k%L.length]);img.animate([{opacity:0,transform:'scale(1.06)'},{opacity:1,transform:'scale(1)'}],{duration:700});k++};
+  next();clearInterval(slide);slide=setInterval(next,3000);o.onclick=()=>{clearInterval(slide);o.remove()};
+ }
+ load();
+};
+
+/* ===== ДОСТИЖЕНИЯ ===== */
+let photoCount=0,audioCount=0;
+async function refreshCounts(){try{photoCount=(await DB.all('photo')).length;audioCount=(await DB.all('audio')).length}catch(e){}}
+const ACH=[
+ {id:'name',e:'👋',t:'Знакомство',d:'Напиши своё имя в настройках',f:()=>!!store.get('name','')},
+ {id:'tour',e:'🧭',t:'Экскурсия',d:'Пройди тур по AIR OS',f:()=>store.get('toured',false)},
+ {id:'plane1',e:'✈️',t:'Первый полёт',d:'Пролети хотя бы одно препятствие в «Самолётике»',f:()=>store.get('planebest',0)>=1},
+ {id:'plane20',e:'🛩️',t:'Ас авиации',d:'Набери 20 очков в «Самолётике»',f:()=>store.get('planebest',0)>=20},
+ {id:'g2048',e:'🔢',t:'Мастер 2048',d:'Набери 3000 очков в «2048»',f:()=>store.get('b2048',0)>=3000},
+ {id:'snake',e:'🐍',t:'Длинная змейка',d:'Съешь 10 звёзд в «Змейке»',f:()=>store.get('snakebest',0)>=10},
+ {id:'tetris',e:'🧱',t:'Архитектор',d:'Набери 1000 очков в «Тетрисе»',f:()=>store.get('tetbest',0)>=1000},
+ {id:'run',e:'🏃',t:'Бегун',d:'Пробеги 50 м в «Бумажном беге»',f:()=>store.get('runbest',0)>=50},
+ {id:'clk',e:'👆',t:'Быстрые пальцы',d:'60 кликов за 10 секунд в «Кликере»',f:()=>store.get('clkbest',0)>=60},
+ {id:'photo',e:'📷',t:'Фотограф',d:'Сделай или добавь первое фото',f:()=>photoCount>=1},
+ {id:'photo10',e:'🎞️',t:'Фотоальбом',d:'Собери 10 фото',f:()=>photoCount>=10},
+ {id:'voice',e:'🎙️',t:'Голос AIR',d:'Запиши первую голосовую заметку',f:()=>audioCount>=1},
+ {id:'night',e:'🌙',t:'Ночная смена',d:'Включи ночные обои',f:()=>store.get('theme','sky')==='night'},
+ {id:'mywall',e:'🖼️',t:'Свои обои',d:'Поставь свою фотографию на обои',f:()=>store.get('theme','sky')==='photo'},
+ {id:'style',e:'🎨',t:'Стилист',d:'Выбери аниме, пиксели или комикс',f:()=>store.get('style','paper')!=='paper'},
+ {id:'air5',e:'🤖',t:'Болтун',d:'Отправь 5 сообщений Эйру',f:()=>store.get('airmsgs',0)>=5},
+ {id:'buyer',e:'🛍️',t:'Покупатель',d:'Установи новое приложение из AIR Store',f:()=>DEFAULT_HIDDEN.some(n=>!hiddenL().includes(n))},
+ {id:'wx',e:'🌤️',t:'Метеоролог',d:'Выбери свой город в «Погоде»',f:()=>!!store.get('wxloc',null)},
+ {id:'notes5',e:'📝',t:'Писатель',d:'Создай 5 заметок',f:()=>store.get('notes',[]).length>=5},
+ {id:'tasks3',e:'✅',t:'Организатор',d:'Выполни 3 задачи',f:()=>store.get('tasks',[]).filter(t=>t.d).length>=3},
+ {id:'alarm',e:'⏰',t:'Подъём!',d:'Поставь будильник',f:()=>store.get('alarms',[]).length>=1},
+ {id:'pet',e:'🐣',t:'Заботливый друг',d:'Покорми питомца 10 раз',f:()=>(store.get('pet',null)||{}).fed>=10},
+];
+function checkAch(){
+ if(!$('#lock').classList.contains('gone'))return;const d=store.get('ach',{});
+ for(const a of ACH){if(d[a.id])continue;let ok=false;try{ok=a.f()}catch(e){}
+  if(ok){d[a.id]=Date.now();store.set('ach',d);sfx.win();confetti(innerWidth/2,200,18);notify({t:'🏅 Достижение: '+a.t,b:a.d,e:a.e,app:'ach'});return}}
+}
+setInterval(checkAch,3500);setInterval(refreshCounts,20000);refreshCounts();
+APP.ach=function(root){
+ const d=store.get('ach',{}),n=Object.keys(d).length;
+ root.innerHTML=`<div class="pad"><h2>🏅 Достижения</h2><div class="card" style="padding:12px 16px"><b>${n} из ${ACH.length}</b><div style="height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin-top:8px"><i style="display:block;height:100%;width:${n/ACH.length*100}%;background:linear-gradient(90deg,#ffb347,#ff6ab0);border-radius:5px"></i></div></div><div class="agrid" id="ag"></div></div>`;
+ ACH.forEach((a,i)=>{const got=d[a.id],e=document.createElement('div');e.className='ab'+(got?'':' lock');e.style.animationDelay=Math.min(i,16)*30+'ms';e.innerHTML=`<div class="e">${got?a.e:'🔒'}</div><b>${a.t}</b><small>${got?new Date(got).toLocaleDateString('ru-RU'):a.d}</small>`;$('#ag').appendChild(e)});
+};
+
+/* ===== ПИТОМЕЦ «САМОЛЁТИК» ===== */
+const cl=v=>Math.max(0,Math.min(100,v));
+function petNow(){
+ const p=store.get('pet',null)||{name:'Самолётик',hunger:80,joy:80,energy:80,xp:0,fed:0,ts:Date.now(),sleepUntil:0},m=Math.max(0,(Date.now()-p.ts)/60000);
+ return {...p,hunger:cl(p.hunger-m/4),joy:cl(p.joy-m/6),energy:cl(p.energy-m/8)};
+}
+function petSave(p){p.ts=Date.now();store.set('pet',p)}
+const petLvl=p=>1+Math.floor(p.xp/50);
+const petMood=p=>Math.min(p.hunger,p.joy)<25?'sad':p.energy<20?'sleepy':'happy';
+function petSVG(mood,sl){
+ const st='stroke="#17325c" stroke-width="1.8" fill="none" stroke-linecap="round"';
+ const eyes=(sl||mood==='sleepy')?`<path d="M33 31 L39 31 M42 26 L48 26" ${st}/><text x="50" y="14" font-size="9" fill="#17325c" font-weight="800">z z</text>`:`<g class="eye"><circle cx="36" cy="31" r="3.2" fill="#fff" stroke="#17325c" stroke-width="1.2"/><circle cx="36.6" cy="31.3" r="1.5" fill="#17325c"/></g><g class="eye"><circle cx="45" cy="26" r="3.2" fill="#fff" stroke="#17325c" stroke-width="1.2"/><circle cx="45.6" cy="26.3" r="1.5" fill="#17325c"/></g>`;
+ const mouth=mood==='sad'?`<path d="M37 42 Q41 37 46 40" ${st}/>`:mood==='happy'?`<path d="M36 37 Q41 43 47 35" ${st}/>`:`<path d="M37 39 L45 37" ${st}/>`;
+ return `<svg viewBox="0 0 64 64" style="width:100%;height:100%;overflow:visible"><path d="M4 30 60 6 44 58 32 40z" fill="#fff" stroke="#17325c" stroke-width="2.2" stroke-linejoin="round"/><path d="M60 6 32 40 30 54 44 58z" fill="#cfe6ff" stroke="#17325c" stroke-width="2.2" stroke-linejoin="round"/>${eyes}${mouth}<circle cx="33" cy="36" r="2" fill="#ff9ab0" opacity=".7"/></svg>`;
+}
+function renderPetWidget(){
+ const el=$('#wpet');if(!el)return;const p=petNow(),m=petMood(p);
+ el.innerHTML=`<div style="width:44px;height:44px">${petSVG(m,false)}</div><div class="s" style="margin:0;font-weight:800">${escH(p.name)}</div><div style="width:100%;height:7px;border-radius:4px;background:var(--line);overflow:hidden"><i style="display:block;height:100%;width:${Math.round((p.hunger+p.joy+p.energy)/3)}%;background:${m==='sad'?'#ff6a6a':'#22b24c'}"></i></div>`;
+}
+$('#wpet').addEventListener('click',()=>openApp({app:'pet'},$('#wpet')));
+setInterval(()=>{if(!$('#lock').classList.contains('gone'))return;const p=petNow(),last=store.get('petNote',0);if(p.hunger<25&&Date.now()-last>1800000){store.set('petNote',Date.now());notify({t:p.name+' проголодался',b:'Покорми питомца 🍎',e:'🐣',app:'pet'})}},60000);
+APP.pet=function(root){
+ let timer=0;cleanups.push(()=>clearTimeout(timer));
+ const bar=(e,v,c)=>`<div class="bar2"><span>${e}</span><div><i style="width:${Math.round(v)}%;background:${c}"></i></div></div>`;
+ function heart(em='❤️'){const h=document.createElement('div');h.className='heart';h.textContent=em;h.style.left=(30+Math.random()*40)+'%';h.style.top='30%';root.appendChild(h);setTimeout(()=>h.remove(),1000)}
+ function draw(msg=''){
+  const p=petNow(),sl=p.sleepUntil>Date.now(),mood=petMood(p);
+  root.innerHTML=`<div class="center" style="gap:10px;position:relative"><div class="hud"><span>Ур. <b>${petLvl(p)}</b></span><span>⭐ ${p.xp%50}/50</span></div><div id="pa" style="width:min(54vw,220px);height:min(54vw,220px);animation:hover 4s ease-in-out infinite">${petSVG(mood,sl)}</div><input class="t" id="pn" value="${escH(p.name)}" maxlength="14" style="text-align:center;font-weight:800;max-width:240px"><div style="width:100%;max-width:320px">${bar('🍎',p.hunger,'#ff6a6a')}${bar('🎾',p.joy,'#ffb347')}${bar('⚡',p.energy,'#6cc3ff')}</div><div class="row" style="flex-wrap:wrap;justify-content:center"><button class="btn" id="pf" style="padding:11px 16px">🍎 Покормить</button><button class="btn" id="pp" style="padding:11px 16px">🎾 Играть</button><button class="btn" id="pz" style="padding:11px 16px">💤 Спать</button></div><div style="opacity:.7;font-size:14px;min-height:20px;font-weight:600">${msg||(sl?'Спит… z z z':mood==='sad'?'Ему грустно, позаботься о нём':mood==='sleepy'?'Хочет спать':'Всё хорошо!')}</div></div>`;
+  $('#pn').onchange=e=>{const q=petNow();q.name=e.target.value.trim()||'Самолётик';petSave(q);renderPetWidget()};
+  const act=fn=>{const q=petNow(),L=petLvl(q);if(q.sleepUntil>Date.now()){toast('Тсс, он спит 💤');return}const r=fn(q);if(r===false)return;q.hunger=cl(q.hunger);q.joy=cl(q.joy);q.energy=cl(q.energy);petSave(q);if(petLvl(q)>L){sfx.win();confetti();notify({t:q.name+' вырос!',b:'Теперь уровень '+petLvl(q)+' 🎉',e:'🐣',app:'pet'})}renderPetWidget();draw(r)};
+  $('#pf').onclick=()=>act(q=>{if(q.hunger>=95){toast('Не хочет есть 🙈');return false}q.hunger+=30;q.joy+=5;q.xp+=5;q.fed=(q.fed||0)+1;sfx.pick();tone(700,.1,'triangle',.12);heart('🍎');return 'Ням-ням! 😋'});
+  $('#pp').onclick=()=>act(q=>{if(q.energy<15){toast('Слишком устал 😴');return false}q.joy+=25;q.energy-=12;q.hunger-=6;q.xp+=8;sfx.win();heart('❤️');heart('✨');return 'Ура, весело! 🎉'});
+  $('#pz').onclick=()=>act(q=>{q.energy+=45;q.xp+=3;q.sleepUntil=Date.now()+6000;sfx.lock();timer=setTimeout(()=>{if(root.isConnected)draw('Выспался! ☀️')},6200);return 'Спит… z z z'});
+ }
+ draw();
+};
 
 /* ===== ОБНОВЛЕНИЕ ===== */
 async function remoteVersion(){const r=await fetch(location.pathname+'?c='+Date.now(),{cache:'no-store'});const t=await r.text();const m=t.match(/const VERSION='([^']+)'/);return m?m[1]:null}

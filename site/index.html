@@ -108,7 +108,7 @@ p.lead{font-size:18px;line-height:1.55;max-width:620px;color:var(--mute)}
 .price b{font-family:var(--display);font-size:38px;color:var(--ink)}
 
 /* steps */
-#steps{--secbg:var(--news);z-index:9}
+#steps{--secbg:var(--note)}
 .steps{position:relative;margin-top:30px;padding-left:34px}
 .steps:before{content:"";position:absolute;left:11px;top:6px;bottom:6px;width:4px;border-radius:2px;background:rgba(20,42,99,.15)}
 .steps .fill{position:absolute;left:11px;top:6px;width:4px;border-radius:2px;background:var(--ink);height:0;transition:height .3s}
@@ -131,13 +131,13 @@ p.lead{font-size:18px;line-height:1.55;max-width:620px;color:var(--mute)}
 .feat span{background:rgba(255,255,255,.6);border-radius:18px;padding:7px 13px;font-weight:600;font-size:14px;color:var(--ink)}
 
 /* game */
-#play{--secbg:var(--note);z-index:5}
+#play{--secbg:var(--news)}
 #gameBox{border-radius:26px;overflow:hidden;background:linear-gradient(180deg,#6cc3ff,#eaf8ff);box-shadow:0 14px 40px rgba(20,42,99,.25);position:relative;touch-action:none;border:6px solid #fff}
 #gameBox canvas{display:block;width:100%;height:340px}
 .gtxt{position:absolute;top:12px;left:16px;right:16px;display:flex;justify-content:space-between;font-weight:700;color:#17325c;pointer-events:none}
 
 /* faq */
-#faq{--secbg:var(--news);z-index:4}
+#faq{--secbg:var(--note)}
 details{background:var(--card);border-radius:18px;padding:16px 20px;margin-bottom:10px;box-shadow:0 4px 14px rgba(20,42,99,.1)}
 summary{font-weight:700;font-size:18px;cursor:pointer;list-style:none;color:var(--ink);display:flex;justify-content:space-between}
 summary:after{content:"+";font-size:24px;transition:transform .3s}
@@ -171,6 +171,32 @@ footer small{opacity:.7}
 #toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,200px);background:var(--ink);color:var(--sun);padding:12px 22px;border-radius:30px;font-weight:600;z-index:120;transition:transform .45s cubic-bezier(.2,1.3,.4,1);max-width:90%;text-align:center}
 #toast.on{transform:translate(-50%,0)}
 .confetti{position:fixed;pointer-events:none;z-index:130}
+/* compare, about, whatsapp */
+.news{--secbg:var(--news)}.note{--secbg:var(--note)}
+.tablewrap{overflow-x:auto;margin-top:26px;padding-bottom:6px}
+.cmp{width:100%;min-width:560px;border-collapse:separate;border-spacing:0;background:var(--card);border-radius:22px;overflow:hidden;box-shadow:0 12px 34px rgba(20,42,99,.14)}
+.cmp th,.cmp td{padding:14px 16px;text-align:center;border-bottom:1px solid rgba(20,42,99,.1);font-size:15px;line-height:1.35}
+.cmp th{font-family:var(--display);font-size:24px;color:var(--ink);font-weight:400;background:rgba(246,188,31,.25)}
+.cmp td:first-child{text-align:left;font-weight:700;color:var(--mute);font-size:13px;letter-spacing:.06em;text-transform:uppercase;width:26%}
+.cmp tr:last-child td{border-bottom:0}
+.cmp b{font-family:var(--display);font-size:24px;color:var(--ink);font-weight:400}
+.how3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.how3>div{background:var(--card);border-radius:22px;padding:20px;box-shadow:0 8px 24px rgba(20,42,99,.1);position:relative}
+.how3 i{font-style:normal;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--sun);font-weight:700;margin-bottom:10px}
+.how3 h3{font-size:24px;margin-bottom:6px}.how3 p{margin:0;color:var(--mute);line-height:1.5}
+.aboutgrid{display:grid;grid-template-columns:1.3fr 1fr;gap:30px;align-items:center;margin-top:10px}
+.aboutcard{background:var(--card);border-radius:26px;padding:22px;box-shadow:0 12px 34px rgba(20,42,99,.14);text-align:center}
+.aboutcard .big{font-size:64px;line-height:1;animation:flyH 5s ease-in-out infinite;display:block}
+.aboutcard div.f{display:flex;justify-content:space-between;align-items:baseline;padding:10px 4px;border-bottom:1px dashed rgba(20,42,99,.2);font-weight:600;color:var(--mute)}
+.aboutcard div.f:last-child{border:0}
+.aboutcard b{font-family:var(--display);font-size:34px;color:var(--ink);font-weight:400}
+#waFloat{position:fixed;left:16px;bottom:18px;z-index:85;display:flex;align-items:center;background:#25D366;color:#fff;border-radius:30px;height:60px;text-decoration:none;font-weight:700;box-shadow:0 8px 20px rgba(0,0,0,.3);overflow:hidden;transition:transform .15s}
+#waFloat:active{transform:scale(.95)}
+#waFloat .wi{width:60px;height:60px;display:grid;place-items:center;flex:none}
+#waFloat .wi svg{width:32px;height:32px;fill:#fff}
+#waFloat .wl{max-width:0;opacity:0;white-space:nowrap;transition:all .5s;padding-right:0}
+#waFloat.open .wl,#waFloat:hover .wl{max-width:260px;opacity:1;padding-right:20px}
+@media(max-width:820px){.how3{grid-template-columns:1fr}.aboutgrid{grid-template-columns:1fr}}
 /* menu */
 #menuBtn{position:fixed;top:14px;left:14px;z-index:80;border:0;background:rgba(255,255,255,.85);color:#142A63;font-weight:700;height:42px;border-radius:21px;font-size:18px;padding:0 16px;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 [data-mode=night] #menuBtn{background:rgba(30,36,80,.9);color:#ffe992}
@@ -226,7 +252,7 @@ footer small{opacity:.7}
 <svg id="progPlane" viewBox="0 0 64 64"><path d="M4 30 60 6 44 58 32 40z" fill="#fff" stroke="#142A63" stroke-width="4" stroke-linejoin="round"/><path d="M60 6 32 40 30 54 44 58z" fill="#cfe6ff" stroke="#142A63" stroke-width="4" stroke-linejoin="round"/></svg>
 
 <button id="menuBtn" aria-label="Меню">☰</button>
-<nav id="menuList"><a href="#stage" data-en="Studio">Студия</a><a href="#collection" data-en="Collection">Коллекция</a><a href="#steps" data-en="How it's made">Как делается</a><a href="#os" data-en="AIR OS">AIR OS</a><a href="#news" data-en="News">Новости</a><a href="#play" data-en="Play">Играть</a><a href="#faq" data-en="Questions">Вопросы</a></nav>
+<nav id="menuList"><a href="#stage" data-en="Studio">Студия</a><a href="#collection" data-en="Collection">Коллекция</a><a href="#compare" data-en="Compare">Сравнение</a><a href="#steps" data-en="How it's made">Как делается</a><a href="#os" data-en="AIR OS">AIR OS</a><a href="#news" data-en="News">Новости</a><a href="#about" data-en="About">О нас</a><a href="#play" data-en="Play">Играть</a><a href="#faq" data-en="Questions">Вопросы</a></nav>
 <div id="top">
  <button id="bSound" title="Звук" aria-label="Звук">🔇</button>
  <button id="bMode" title="День / ночь" aria-label="День или ночь">🌙</button>
@@ -284,8 +310,23 @@ footer small{opacity:.7}
  </div>
 </section>
 
+<!-- COMPARE -->
+<section id="compare" class="news">
+ <div class="wrap">
+  <div class="eyebrow" data-en="Compare">Сравнение</div>
+  <h2 data-en="Which AIR is right for you?">Какой AIR тебе подходит?</h2>
+  <div class="tablewrap"><table class="cmp" id="cmp"></table></div>
+  <h2 style="margin-top:56px" data-en="How to get your AIR">Как получить свой AIR</h2>
+  <div class="how3">
+   <div><i>1</i><h3 data-en="Build">Собери</h3><p data-en="Pick the model, paper, pattern and engraving in the studio, or take a ready edition.">Выбери модель, бумагу, узор и надпись в студии или возьми готовое издание.</p></div>
+   <div><i>2</i><h3 data-en="Send the order">Отправь заказ</h3><p data-en="Add it to the cart, leave your name and contact and press Send. WhatsApp opens with the message ready — just press Send there.">Положи в корзину, напиши имя и контакт и нажми «Отправить заказ». Откроется WhatsApp с готовым сообщением — останется нажать «Отправить».</p></div>
+   <div><i>3</i><h3 data-en="We agree on details">Договоримся</h3><p data-en="We reply in WhatsApp: we clarify the details, delivery and payment with you.">Мы ответим в WhatsApp: уточним детали, доставку и оплату.</p></div>
+  </div>
+ </div>
+</section>
+
 <!-- STEPS -->
-<section id="steps" class="news">
+<section id="steps" class="note">
  <div class="wrap">
   <div class="eyebrow" data-en="How it's made">Как это делается</div>
   <h2 data-en="How a paper phone is born">Как рождается бумажный телефон</h2>
@@ -332,8 +373,28 @@ footer small{opacity:.7}
  </div>
 </section>
 
+<!-- ABOUT -->
+<section id="about" class="note">
+ <div class="wrap">
+  <div class="eyebrow" data-en="About">О нас</div>
+  <h2 data-en="What is AIR">Что такое AIR</h2>
+  <div class="aboutgrid">
+   <div>
+    <p class="lead" data-en="AIR makes paper phones. You choose the paper, the pattern, the cameras and even an engraving on the back — and we turn it into a phone made of paper.">AIR — это бумажные телефоны. Ты выбираешь бумагу, узор, камеры и даже надпись на спинке, а мы превращаем это в телефон из бумаги.</p>
+    <p class="lead" data-en="Together with the phones we invented AIR OS — a paper operating system. It runs right in the browser of your real phone, with games, a camera, a voice recorder, weather, a pet and a helper called Air.">Вместе с телефонами мы придумали AIR OS — бумажную операционную систему. Она работает прямо в браузере твоего настоящего телефона: с играми, камерой, диктофоном, погодой, питомцем и помощником Эйр.</p>
+    <a class="cta" id="aboutWA" href="#" target="_blank" rel="noopener" data-en="Write to us ✈️">Напиши нам ✈️</a>
+   </div>
+   <div class="aboutcard"><span class="big">✈️</span>
+    <div class="f"><span data-en="ready editions">готовых изданий</span><b data-count="6">0</b></div>
+    <div class="f"><span data-en="models">модели</span><b data-count="3">0</b></div>
+    <div class="f"><span data-en="apps & games in AIR OS">приложений и игр в AIR OS</span><b data-count="30">0</b></div>
+   </div>
+  </div>
+ </div>
+</section>
+
 <!-- GAME -->
-<section id="play" class="note">
+<section id="play" class="news">
  <div class="wrap">
   <div class="eyebrow" data-en="Play">Поиграй</div>
   <h2 data-en="Launch a paper plane">Запусти бумажный самолётик</h2>
@@ -343,7 +404,7 @@ footer small{opacity:.7}
 </section>
 
 <!-- FAQ -->
-<section id="faq" class="news">
+<section id="faq" class="note">
  <div class="wrap">
   <div class="eyebrow" data-en="Questions">Вопросы</div>
   <h2 data-en="Good to know">Что полезно знать</h2>
@@ -365,6 +426,7 @@ footer small{opacity:.7}
  </div>
 </footer>
 
+<a id="waFloat" href="#" target="_blank" rel="noopener" aria-label="WhatsApp" style="display:none"><span class="wi"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.2.1.8-.1 1.4z"/></svg></span><span class="wl" id="waLbl"></span></a>
 <div id="modal"><div class="mbox"><button class="pill mclose" id="mClose">✕</button><div class="mgrid"><div class="scene" id="mscene"><div class="ph" id="mph"></div><div class="shadow"></div></div><div><h3 id="mName"></h3><p class="lead" id="mDesc" style="margin:0 0 14px"></p><div class="chips" id="mSpecs" style="margin-bottom:12px"></div><div class="price"><span id="mPriceT"></span><b id="mPrice"></b></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="cta" id="mAdd" style="margin:0"></button><button class="pill" id="mConf"></button></div></div></div></div></div>
 <button id="cartBtn" aria-label="Корзина">🛒<b id="cartN">0</b></button>
 <div id="cartBack"></div>
@@ -408,7 +470,7 @@ function applyLang(){
  document.documentElement.lang=lang;$$('[data-en]').forEach(e=>e.innerHTML=lang==='en'?e.dataset.en:e.dataset.ru);
  $('#bLang').textContent=lang==='en'?'RU':'EN';$('#oName').placeholder=t('Имя','Name');$('#oContact').placeholder=t('Телефон или @ник','Phone or @handle');$('#oNote').placeholder=t('Комментарий','Comment');$('#cEng').placeholder=t('Даша','Name');
  $('#live').textContent=liveOn?t('Экран: живой','Screen: live'):t('Экран: демо','Screen: demo');
- buildConfUI();buildSteps();renderCart();price();renderEditions();renderNews();$('#paperTitle').textContent=t('Бумажные новости','Paper News');$('#mAdd').textContent=t('В корзину 🛒','Add to cart 🛒');$('#mConf').textContent=t('Изменить в студии','Edit in studio');$('#mPriceT').textContent=t('Цена','Price');$('#rTabs').dataset.x=1;$('#gDist').textContent=t('0 м','0 m');updBest();
+ buildConfUI();buildSteps();renderCart();price();renderEditions();renderNews();renderCompare();setupWA();$('#paperTitle').textContent=t('Бумажные новости','Paper News');$('#mAdd').textContent=t('В корзину 🛒','Add to cart 🛒');$('#mConf').textContent=t('Изменить в студии','Edit in studio');$('#mPriceT').textContent=t('Цена','Price');$('#rTabs').dataset.x=1;$('#gDist').textContent=t('0 м','0 m');updBest();
 }
 function applyMode(){document.body.dataset.mode=mode;$('#bMode').textContent=mode==='night'?'☀️':'🌙';document.querySelector('meta[name=theme-color]').content=mode==='night'?'#1b2a66':'#F6BC1F'}
 $('#bLang').onclick=()=>{lang=lang==='en'?'ru':'en';localStorage.setItem('air_lang',lang);rustle();applyLang()};
@@ -416,7 +478,7 @@ $('#bMode').onclick=()=>{mode=mode==='night'?'day':'night';localStorage.setItem(
 $('#bSound').onclick=()=>{snd=!snd;$('#bSound').textContent=snd?'🔊':'🔇';rustle(.2);ding(700);toast(snd?t('Звук включён','Sound on'):t('Звук выключен','Sound off'))};
 
 /* ---- рваные края ---- */
-function tears(){$$('section').forEach((s,i,a)=>{if(i===a.length-1)return;s.querySelectorAll(':scope>.tear').forEach(x=>x.remove());const w=1000,h=40,pts=[];let x=0;while(x<=w){pts.push([x,10+Math.random()*26]);x+=7+Math.random()*16}
+function tears(){$$('section').forEach((s,i,a)=>{s.style.zIndex=a.length-i+5;if(i===a.length-1)return;s.querySelectorAll(':scope>.tear').forEach(x=>x.remove());const w=1000,h=40,pts=[];let x=0;while(x<=w){pts.push([x,10+Math.random()*26]);x+=7+Math.random()*16}
  const d='M0 0 '+pts.map(p=>`L${p[0].toFixed(0)} ${p[1].toFixed(1)}`).join(' ')+` L${w} 0 Z`;
  const sv=document.createElementNS('http://www.w3.org/2000/svg','svg');sv.setAttribute('class','tear');sv.setAttribute('viewBox',`0 0 ${w} ${h}`);sv.setAttribute('preserveAspectRatio','none');
  sv.innerHTML=`<path d="${d}" fill="#fff" transform="translate(0 4)" opacity=".9"/><path d="${d}" fill="currentColor"/>`;s.appendChild(sv)})}
@@ -637,6 +699,30 @@ async function init360(){
   $('#rL').onclick=()=>{auto=false;idx-=2;show();rustle(.08,.06)};$('#rR').onclick=()=>{auto=false;idx+=2;show();rustle(.08,.06)};
   load(0);
  }catch(e){}
+}
+
+/* ---- сравнение моделей ---- */
+function renderCompare(){
+ const SIZE={mini:['Компактный','Compact'],one:['Классический','Classic'],max:['Большой','Large']},
+  FOR={mini:['Лёгкий и маленький: в карман, первый AIR','Light and small: for the pocket, a first AIR'],one:['На каждый день: золотая середина','Everyday: the golden mean'],max:['Большой экран и три камеры','Big screen and three cameras']},
+  order=['mini','one','max'],from=m=>calc({model:m,pat:0,cams:1,eng:''}),to=m=>calc({model:m,pat:4,cams:3,eng:'x'}),row=(l,f)=>`<tr><td>${l}</td>${order.map(f).join('')}</tr>`;
+ $('#cmp').innerHTML=`<thead><tr><th></th>${order.map(m=>`<th>${MODELS[m].n}</th>`).join('')}</tr></thead><tbody>`
+  +row(t('Размер','Size'),m=>`<td>${t(SIZE[m][0],SIZE[m][1])}</td>`)
+  +row(t('Подойдёт','Best for'),m=>`<td>${t(FOR[m][0],FOR[m][1])}</td>`)
+  +row(t('Цена от','Price from'),m=>`<td><b>${money(from(m))}</b></td>`)
+  +row(t('Максимум (узор, камеры, надпись)','Maximum (pattern, cameras, engraving)'),m=>`<td><b>${money(to(m))}</b></td>`)
+  +row(t('Камеры','Cameras'),()=>`<td>1–3</td>`)
+  +row(t('Узоры','Patterns'),()=>`<td>${PATS.length}</td>`)
+  +row('',m=>`<td><button class="pill pick" data-m="${m}">${t('Выбрать','Choose')}</button></td>`)+'</tbody>';
+ $$('.pick').forEach(b=>b.onclick=()=>{cfg.model=b.dataset.m;buildConfUI();buildPhone();price();$('#stage').scrollIntoView({behavior:'smooth'});rustle()});
+}
+
+/* ---- плавающая кнопка WhatsApp ---- */
+function setupWA(){
+ const w=$('#waFloat');if(!CONTACT.whatsapp){w.style.display='none';return}
+ const u=`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(t('Здравствуйте! У меня вопрос по AIR','Hello! I have a question about AIR'))}`;
+ w.href=u;$('#aboutWA').href=u;$('#waLbl').textContent=t('Есть вопрос? Напиши нам','Have a question? Write to us');w.style.display='flex';
+ if(!setupWA.done){setupWA.done=1;setTimeout(()=>w.classList.add('open'),2500);setTimeout(()=>w.classList.remove('open'),9000)}
 }
 
 /* ---- старт ---- */
