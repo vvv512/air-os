@@ -387,8 +387,10 @@ footer small{opacity:.7}
 <script>
 /* ===== НАСТРОЙКИ САЙТА (поменяй под себя) ===== */
 const CONTACT={whatsapp:'',telegram:'',email:'',formspree:''};   // formspree: ID формы с сайта formspree.io (например 'xyzabcde') — тогда заказы будут приходить на твою почту; email: адрес для кнопки «E-mail'            // номер WhatsApp цифрами (например 79001234567) и ник Telegram без @. Пусто = выбор получателя в самом мессенджере
-const CUR='₽';
-const PRICES={models:{one:1900,mini:1500,max:2400},pattern:{none:0,news:0,grid:100,dots:100,stars:200},camera:150,engrave:200};
+const CUR='€';
+// Цены в евро: базовая модель 2–3 €, с узором, доп. камерами и надписью — максимум 7 € (Max + звёзды + 3 камеры + надпись)
+const PRICES={models:{one:2.5,mini:2,max:3},pattern:{none:0,news:0,grid:.5,dots:.5,stars:1},camera:.75,engrave:1.5};
+const money=n=>n.toLocaleString(typeof lang!=='undefined'&&lang==='en'?'en-GB':'ru-RU',{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2})+' '+CUR;
 /* ============================================= */
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 let lang=localStorage.getItem('air_lang')||'ru',mode=localStorage.getItem('air_mode')||'day',snd=false;
@@ -478,7 +480,7 @@ function buildConfUI(){
  [1,2,3].forEach(n=>chip($('#cCam'),n+' ✦',cfg.cams===n,()=>cfg.cams=n));
 }
 function calc(c=cfg){return PRICES.models[c.model]+PRICES.pattern[PATS[c.pat][0]]+(c.cams-1)*PRICES.camera+(c.eng?PRICES.engrave:0)}
-function price(){$('#priceTxt').textContent=t('Цена (с учётом надписи и камер)','Price (incl. engraving & cameras)');$('#priceVal').textContent=calc().toLocaleString('ru-RU')+' '+CUR}
+function price(){$('#priceTxt').textContent=t('Цена (с учётом надписи и камер)','Price (incl. engraving & cameras)');$('#priceVal').textContent=money(calc())}
 $('#cEng').oninput=e=>{cfg.eng=e.target.value;price();const el=document.querySelector('.engr');if(el)el.textContent=cfg.eng};
 $('#rand').onclick=()=>{cfg.model=Object.keys(MODELS)[Math.floor(Math.random()*3)];cfg.color=Math.floor(Math.random()*COLORS.length);cfg.pat=Math.floor(Math.random()*PATS.length);cfg.cams=1+Math.floor(Math.random()*3);buildConfUI();buildPhone();price();tryy+=180;rustle(.15,.2);ding(700)};
 
@@ -488,14 +490,14 @@ const saveCart=()=>localStorage.setItem('air_cart',JSON.stringify(cart));
 function desc(c){return `${c.ed||MODELS[c.model].n},${t('бумага','paper')} ${t(COLORS[c.color][1],COLORS[c.color][2]).toLowerCase()}, ${t('узор','pattern')} «${t(PATS[c.pat][1],PATS[c.pat][2])}», ${t('камер','cameras')}: ${c.cams}${c.eng?`, ${t('надпись','engraving')} «${c.eng}»`:''}`}
 function renderCart(){
  $('#cartN').textContent=cart.reduce((a,c)=>a+c.q,0);$('#cartEmpty').style.display=cart.length?'none':'';$('#cartForm').style.display=cart.length?'':'none';
- $('#cartItems').innerHTML=cart.map((c,i)=>`<div class="item"><i style="background:${COLORS[c.color][0]}"></i><div><b>${desc(c).split(',')[0]}</b><br>${desc(c).split(',').slice(1).join(',')}<br><b>${(calc(c)*c.q).toLocaleString('ru-RU')} ${CUR}</b></div><div class="qty"><button data-i="${i}" data-d="-1">−</button>${c.q}<button data-i="${i}" data-d="1">+</button></div></div>`).join('');
+ $('#cartItems').innerHTML=cart.map((c,i)=>`<div class="item"><i style="background:${COLORS[c.color][0]}"></i><div><b>${desc(c).split(',')[0]}</b><br>${desc(c).split(',').slice(1).join(',')}<br><b>${money(calc(c)*c.q)}</b></div><div class="qty"><button data-i="${i}" data-d="-1">−</button>${c.q}<button data-i="${i}" data-d="1">+</button></div></div>`).join('');
  $$('#cartItems .qty button').forEach(b=>b.onclick=()=>{const c=cart[+b.dataset.i];c.q+=+b.dataset.d;if(c.q<=0)cart.splice(+b.dataset.i,1);saveCart();renderCart();rustle(.1,.08)});
- $('#cartTotal').textContent=cart.reduce((a,c)=>a+calc(c)*c.q,0).toLocaleString('ru-RU')+' '+CUR;
+ $('#cartTotal').textContent=money(cart.reduce((a,c)=>a+calc(c)*c.q,0));
 }
 function cartOpen(on){$('#cart').classList.toggle('on',on);$('#cartBack').classList.toggle('on',on);rustle(.15,.2)}
 $('#cartBtn').onclick=()=>cartOpen(true);$('#cartX').onclick=()=>cartOpen(false);$('#cartBack').onclick=()=>cartOpen(false);
 $('#addCart').onclick=()=>{addToCartRaw({...cfg,ed:''});ding(900);confetti($('#addCart'),18);toast(t('Добавлено в корзину ✈️','Added to cart ✈️'));$('#cartBtn').animate([{transform:'scale(1.3) rotate(-10deg)'},{transform:'scale(1)'}],{duration:350})};
-function orderText(){return `${t('Заказ AIR','AIR order')}:\n`+cart.map((c,i)=>`${i+1}) ${desc(c)} — ${c.q} ${t('шт','pcs')} × ${calc(c)} ${CUR}`).join('\n')+`\n${t('Итого','Total')}: ${cart.reduce((a,c)=>a+calc(c)*c.q,0)} ${CUR}\n${t('Имя','Name')}: ${$('#oName').value}\n${t('Контакт','Contact')}: ${$('#oContact').value}\n${t('Комментарий','Comment')}: ${$('#oNote').value}`}
+function orderText(){return `${t('Заказ AIR','AIR order')}:\n`+cart.map((c,i)=>`${i+1}) ${desc(c)} — ${c.q} ${t('шт','pcs')} × ${money(calc(c))}`).join('\n')+`\n${t('Итого','Total')}: ${money(cart.reduce((a,c)=>a+calc(c)*c.q,0))}\n${t('Имя','Name')}: ${$('#oName').value}\n${t('Контакт','Contact')}: ${$('#oContact').value}\n${t('Комментарий','Comment')}: ${$('#oNote').value}`}
 function needInfo(){if(!$('#oName').value.trim()||!$('#oContact').value.trim()){toast(t('Напиши имя и контакт','Please add your name and contact'));return true}return false}
 $('#sendWA').onclick=()=>{if(needInfo())return;window.open(`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(orderText())}`,'_blank')};
 $('#sendTG').onclick=()=>{if(needInfo())return;window.open(CONTACT.telegram?`https://t.me/${CONTACT.telegram}`:`https://t.me/share/url?url=${encodeURIComponent(location.href)}&text=${encodeURIComponent(orderText())}`,'_blank');if(CONTACT.telegram)navigator.clipboard&&navigator.clipboard.writeText(orderText())};
@@ -576,7 +578,7 @@ function renderEditions(){
  const box=$('#cards');box.innerHTML='';
  EDITIONS.forEach(e=>{
   const d=document.createElement('div');d.className='card2';
-  d.innerHTML=`<div class="cph"><div class="sc"><div class="ph"></div></div></div><h3>${e.ed}</h3><p>${t(e.tag[0],e.tag[1])}</p><div class="price" style="margin:8px 0"><span>${t('Цена','Price')}</span><b style="font-size:30px">${calc(e).toLocaleString('ru-RU')} ${CUR}</b></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="cta" style="margin:0;padding:11px 20px;font-size:15px">${t('Смотреть','View')}</button><button class="pill">${t('В корзину','Add')} 🛒</button></div>`;
+  d.innerHTML=`<div class="cph"><div class="sc"><div class="ph"></div></div></div><h3>${e.ed}</h3><p>${t(e.tag[0],e.tag[1])}</p><div class="price" style="margin:8px 0"><span>${t('Цена','Price')}</span><b style="font-size:30px">${money(calc(e))}</b></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="cta" style="margin:0;padding:11px 20px;font-size:15px">${t('Смотреть','View')}</button><button class="pill">${t('В корзину','Add')} 🛒</button></div>`;
   phoneInto(d.querySelector('.ph'),e);d.querySelector('.sc').style.transform=`scale(${Math.min(1,235/MODELS[e.model].h)})`;
   d.querySelector('.cta').onclick=()=>openModal(e);d.querySelector('.cph').onclick=()=>openModal(e);
   d.querySelector('.pill').onclick=()=>{addToCartRaw(e);ding(900);confetti(d.querySelector('.pill'),16);toast(t('Добавлено в корзину ✈️','Added to cart ✈️'))};
@@ -590,7 +592,7 @@ function openModal(e){
  mCfg=e;$('#modal').classList.add('on');phoneInto($('#mph'),e);updateMock();
  $('#mName').textContent=e.ed;$('#mDesc').textContent=t(e.tag[0],e.tag[1]);
  $('#mSpecs').innerHTML=[MODELS[e.model].n,t(COLORS[e.color][1],COLORS[e.color][2]),t(PATS[e.pat][1],PATS[e.pat][2]),e.cams+' ✦'].map(s=>`<span class="chip on" style="cursor:default">${s}</span>`).join('');
- $('#mPrice').textContent=calc(e).toLocaleString('ru-RU')+' '+CUR;$('#mAdd').textContent=t('В корзину 🛒','Add to cart 🛒');$('#mConf').textContent=t('Изменить в студии','Edit in studio');$('#mPriceT').textContent=t('Цена','Price');
+ $('#mPrice').textContent=money(calc(e));$('#mAdd').textContent=t('В корзину 🛒','Add to cart 🛒');$('#mConf').textContent=t('Изменить в студии','Edit in studio');$('#mPriceT').textContent=t('Цена','Price');
  if(mSpin)mSpin.alive=false;mSpin=spinner($('#mscene'),$('#mph'),true);rustle();
 }
 function closeModal(){$('#modal').classList.remove('on');if(mSpin)mSpin.alive=false}
