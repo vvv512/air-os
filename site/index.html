@@ -376,7 +376,8 @@ footer small{opacity:.7}
    <div class="row"><input class="inp" id="oContact" placeholder="Телефон или @ник"></div>
    <div class="row"><input class="inp" id="oNote" placeholder="Комментарий"></div>
    <button class="cta" id="sendOrder" style="margin:0 0 12px;width:100%;justify-content:center" data-en="Send order ✈️">Отправить заказ ✈️</button>
-   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="pill" id="sendWA">WhatsApp</button><button class="pill" id="sendTG">Telegram</button><button class="pill" id="sendEmail">E-mail</button><button class="pill" id="sendCopy" data-en="Copy order">Копировать заказ</button></div>
+   <p id="waHint" style="font-size:13px;color:var(--mute);margin:-4px 0 10px;line-height:1.4;display:none" data-en="WhatsApp will open with your order ready — just press Send there.">Откроется WhatsApp с готовым заказом — останется нажать «Отправить» там.</p>
+   <div id="sendPills" style="display:flex;gap:8px;flex-wrap:wrap"><button class="pill" id="sendWA">WhatsApp</button><button class="pill" id="sendTG">Telegram</button><button class="pill" id="sendEmail">E-mail</button><button class="pill" id="sendCopy" data-en="Copy order">Копировать заказ</button></div>
    <p style="font-size:12px;color:var(--mute);margin:12px 0 0;line-height:1.4" data-en="By sending the order you agree that we will see your name and contact — only to reply to you.">Отправляя заказ, ты соглашаешься, что мы увидим твоё имя и контакт, только чтобы ответить тебе.</p>
   </div>
   <p id="cartEmpty" style="text-align:center;color:var(--mute);margin-top:40px" data-en="The cart is empty. Build your first AIR!">В корзине пока пусто. Собери свой первый AIR!</p>
@@ -386,7 +387,7 @@ footer small{opacity:.7}
 
 <script>
 /* ===== НАСТРОЙКИ САЙТА (поменяй под себя) ===== */
-const CONTACT={whatsapp:'',telegram:'',email:'',formspree:''};   // formspree: ID формы с сайта formspree.io (например 'xyzabcde') — тогда заказы будут приходить на твою почту; email: адрес для кнопки «E-mail'            // номер WhatsApp цифрами (например 79001234567) и ник Telegram без @. Пусто = выбор получателя в самом мессенджере
+const CONTACT={whatsapp:'79224578312',telegram:'',email:'',formspree:''};   // formspree: ID формы с сайта formspree.io (например 'xyzabcde') — тогда заказы будут приходить на твою почту; email: адрес для кнопки «E-mail'            // номер WhatsApp цифрами (например 79001234567) и ник Telegram без @. Пусто = выбор получателя в самом мессенджере
 const CUR='€';
 // Цены в евро: базовая модель 2–3 €, с узором, доп. камерами и надписью — максимум 7 € (Max + звёзды + 3 камеры + надпись)
 const PRICES={models:{one:2.5,mini:2,max:3},pattern:{none:0,news:0,grid:.5,dots:.5,stars:1},camera:.75,engrave:1.5};
@@ -548,8 +549,12 @@ document.addEventListener('click',e=>{if(!e.target.closest('#menuList')&&!e.targ
 /* ---- заказ ---- */
 const ckey=c=>[c.ed||'',c.model,c.color,c.pat,c.cams,c.eng].join('|');
 function addToCartRaw(c){const ex=cart.find(x=>ckey(x)===ckey(c));if(ex)ex.q++;else cart.push({...c,q:1});saveCart();renderCart()}
-$('#sendOrder').style.display=CONTACT.formspree?'':'none';$('#sendEmail').style.display=CONTACT.email?'':'none';
-$('#sendOrder').onclick=async()=>{if(needInfo())return;const b=$('#sendOrder');b.disabled=true;
+const oneBtn=!!(CONTACT.whatsapp||CONTACT.formspree);
+$('#sendOrder').style.display=oneBtn?'':'none';$('#sendPills').style.display=oneBtn?'none':'flex';$('#sendEmail').style.display=CONTACT.email?'':'none';
+$('#waHint').style.display=CONTACT.whatsapp?'':'none';
+$('#sendOrder').onclick=async()=>{if(needInfo())return;
+ if(CONTACT.whatsapp){const u=`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(orderText())}`;if(!window.open(u,'_blank'))location.href=u;return}
+ const b=$('#sendOrder');b.disabled=true;
  try{const r=await fetch('https://formspree.io/f/'+CONTACT.formspree,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},body:JSON.stringify({name:$('#oName').value,contact:$('#oContact').value,message:orderText(),_subject:'Заказ AIR'})});
   if(!r.ok)throw 0;cart=[];saveCart();renderCart();cartOpen(false);confetti(null,60);ding(1000);toast(t('Заказ отправлен! Мы скоро свяжемся ✈️','Order sent! We will contact you soon ✈️'))}
  catch(e){toast(t('Не получилось отправить. Выбери мессенджер ниже','Could not send. Please use a messenger below'))}b.disabled=false};
